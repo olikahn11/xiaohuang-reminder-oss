@@ -1,0 +1,17 @@
+{
+  "name": "小黄提醒管家",
+  "short_name": "小黄提醒",
+  "description": "统一管理项目、账号、订阅、服务器与待办提醒。",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#091538",
+  "theme_color": "#152b72",
+  "icons": [
+    {
+      "src": "/assets/app-icon.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

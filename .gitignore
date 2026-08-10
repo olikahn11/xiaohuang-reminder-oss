@@ -1,0 +1,17 @@
+app/node_modules/
+app/dist/
+app/.vite/
+app/.playwright-cli/
+app/output/playwright/
+app/src-tauri/target/
+app/src-tauri/gen/schemas/
+app/src-tauri/gen/apple/build*/
+app/src-tauri/gen/apple/Externals/
+deliverables/
+build/
+public-release/
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example

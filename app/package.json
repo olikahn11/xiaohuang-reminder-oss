@@ -1,0 +1,40 @@
+{
+  "name": "xuji",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node scripts/prepare-sites-build.mjs",
+    "preview": "vite preview",
+    "test:calendar": "node --test tests/calendar.test.mjs",
+    "test:security": "node --test tests/security.test.mjs",
+    "test:sites": "node --test tests/sites-worker.test.mjs",
+    "tauri": "tauri",
+    "native:dev": "tauri dev",
+    "native:build:mac": "tauri build --bundles app,dmg --target aarch64-apple-darwin",
+    "native:ios:init": "tauri ios init --ci",
+    "native:ios:build:sim": "tauri ios build --debug --target aarch64-sim --no-sign --ci"
+  },
+  "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
+    "@tauri-apps/api": "^2.11.1",
+    "@tauri-apps/plugin-biometric": "^2.3.2",
+    "@tauri-apps/plugin-dialog": "^2.7.2",
+    "@tauri-apps/plugin-fs": "^2.5.1",
+    "@tauri-apps/plugin-notification": "^2.3.3",
+    "@tauri-apps/plugin-opener": "^2.5.4",
+    "@tauri-apps/plugin-store": "^2.4.4",
+    "@vitejs/plugin-react": "5.0.4",
+    "@zxing/browser": "^0.2.1",
+    "lunar-javascript": "^1.7.7",
+    "motion": "^13.0.0",
+    "qrcode": "^1.5.4",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "vite": "6.4.2"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.11.4"
+  }
+}

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleDevelopmentRegion</key>
+  <string>zh_CN</string>
+  <key>NSCameraUsageDescription</key>
+  <string>小黄提醒管家使用相机扫描另一台设备生成的一次性加密传输二维码。</string>
+  <key>NSFaceIDUsageDescription</key>
+  <string>小黄提醒管家使用 Face ID 解锁只保存在本机的加密保险箱。</string>
+  <key>NSLocalNetworkUsageDescription</key>
+  <string>小黄提醒管家在同一 Wi-Fi 内进行一次性端到端加密资料互传。</string>
+</dict>
+</plist>

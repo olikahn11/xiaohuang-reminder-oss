@@ -1,0 +1,51 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "小黄提醒管家",
+  "version": "0.3.0",
+  "identifier": "cn.xiaohuang.reminder",
+  "build": {
+    "frontendDist": "../dist/client",
+    "devUrl": "http://localhost:4173",
+    "beforeDevCommand": "npm run dev -- --host 0.0.0.0 --port 4173 --strictPort",
+    "beforeBuildCommand": "npm run build"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "小黄提醒管家",
+        "width": 1440,
+        "height": 900,
+        "minWidth": 1100,
+        "minHeight": 700,
+        "center": true,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' asset: http://asset.localhost data: blob:; media-src 'self' blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' ipc: http://ipc.localhost; font-src 'self' data:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["app", "dmg"],
+    "category": "Productivity",
+    "shortDescription": "小黄系列的账号、订阅与项目提醒管家",
+    "longDescription": "统一管理项目账号、订阅续费、服务器、开发者资质、待办和申请结果，并通过系统通知提醒关键日期。",
+    "copyright": "Copyright © 2026 小黄提醒管家",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "macOS": {
+      "minimumSystemVersion": "13.0",
+      "signingIdentity": "-"
+    },
+    "iOS": {
+      "minimumSystemVersion": "16.0"
+    }
+  }
+}
