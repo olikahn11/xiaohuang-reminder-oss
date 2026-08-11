@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 私密安全报告
+    url: https://github.com/olikahn11/xiaohuang-reminder-oss/security/advisories/new
+    about: 未修复漏洞、可利用细节或敏感信息请通过此入口私下报告。

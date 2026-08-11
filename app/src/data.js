@@ -19,7 +19,8 @@ export const LEGACY_DEMO_IDS = new Set([
 ]);
 
 export const NAVIGATION = [
-  { label: "总览", kind: "overview", icon: "overview" },
+  { label: "首页", kind: "overview", icon: "home" },
+  { label: "总览", kind: "hub", icon: "overview" },
   { label: "项目", kind: "project", icon: "project" },
   { label: "账号与绑定", kind: "account", icon: "account" },
   { label: "订阅续费", kind: "renewal", icon: "renewal" },
@@ -27,6 +28,7 @@ export const NAVIGATION = [
   { label: "开发者资质", kind: "developer", icon: "developer" },
   { label: "发布记录", kind: "publish", icon: "publish" },
   { label: "待办与确认", kind: "pending", icon: "pending" },
+  { label: "自定义记录", kind: "custom", icon: "custom" },
   { label: "农历黄历", kind: "almanac", icon: "almanac" },
 ];
 
@@ -38,5 +40,6 @@ export const KIND_LABELS = {
   server: "服务器",
   developer: "开发者资质",
   publish: "发布记录",
+  custom: "自定义记录",
   almanac: "农历黄历",
 };

@@ -53,8 +53,8 @@ targets:
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
         CFBundleDisplayName: 小黄提醒管家
-        CFBundleShortVersionString: 0.3.0
-        CFBundleVersion: "0.3.0"
+        CFBundleShortVersionString: 0.6.1
+        CFBundleVersion: "0.6.1"
         NSCameraUsageDescription: 小黄提醒管家使用相机扫描另一台设备生成的一次性加密传输二维码。
         NSFaceIDUsageDescription: 小黄提醒管家使用 Face ID 解锁只保存在本机的加密保险箱。
         NSLocalNetworkUsageDescription: 小黄提醒管家在同一 Wi-Fi 内进行一次性端到端加密资料互传。
@@ -68,6 +68,7 @@ targets:
         RUST_LOG: info
     settings:
       base:
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon052
         ENABLE_BITCODE: false
         ARCHS: [arm64]
         VALID_ARCHS: arm64 

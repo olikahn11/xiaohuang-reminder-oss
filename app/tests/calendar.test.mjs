@@ -6,6 +6,7 @@ import {
   lunarInfoForDate,
   lunarMonthOptions,
   lunarPartsForSolarDate,
+  lunarSummaryForDate,
   solarDateKeyFromLunar,
 } from "../src/lunarCalendar.js";
 import { RECORD_FORM_CONFIG, defaultStatusForKind, fieldsForKind } from "../src/recordFields.js";
@@ -34,16 +35,27 @@ test("农历快速选择支持闰月并准确换算公历", () => {
   assert.equal(lunarInfoForDate("2025-07-25").lunarDate, "农历闰六月初一");
 });
 
+test("月历日期格使用轻量农历摘要，不预先展开 13 个时辰", () => {
+  const summary = lunarSummaryForDate("2026-08-11");
+  assert.equal(summary.dateKey, "2026-08-11");
+  assert.equal(typeof summary.lunarDate, "string");
+  assert.equal("timeSlots" in summary, false);
+  assert.equal(lunarInfoForDate("2026-08-11").timeSlots.length, 13);
+});
+
 test("不同记录类型只显示各自需要的字段", () => {
   const renewalKeys = fieldsForKind("renewal").map((field) => field.key);
   const pendingKeys = fieldsForKind("pending").map((field) => field.key);
   const almanacKeys = fieldsForKind("almanac").map((field) => field.key);
+  const customKeys = fieldsForKind("custom").map((field) => field.key);
 
   assert.ok(renewalKeys.includes("amount"));
   assert.ok(!pendingKeys.includes("amount"));
   assert.ok(almanacKeys.includes("traditionMatter"));
   assert.ok(almanacKeys.includes("realWorldConstraints"));
   assert.ok(!renewalKeys.includes("traditionMatter"));
+  assert.deepEqual(customKeys.slice(0, 3), ["dueDate", "dueTime", "status"]);
+  assert.equal(defaultStatusForKind("custom"), "active");
   assert.equal(defaultStatusForKind("almanac"), "planned");
-  assert.equal(Object.keys(RECORD_FORM_CONFIG).length, 8);
+  assert.equal(Object.keys(RECORD_FORM_CONFIG).length, 9);
 });

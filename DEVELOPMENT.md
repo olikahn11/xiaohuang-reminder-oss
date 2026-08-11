@@ -41,6 +41,9 @@ macOS 正式公开分发需要 Apple Developer ID 签名与公证。iOS 真机�
 - `deliverables/`、`node_modules/`、Rust target、Xcode build 与其他生成物均保持忽略。
 - 修改数据模型、加密、同步或提醒逻辑后，必须重新执行对应自动测试。
 
-## 发布边界
+## 仓库与发布边界
 
-完整代码仅同步到私有仓库。公开仓库只维护产品介绍、安装说明、下载 Release、截图、更新日志、FAQ 与版权说明。
+- 私有开发仓库保留完整开发备份与后续工作记录。
+- `xiaohuang-reminder-oss` 公开源码仓库用于协作、Issue、Pull Request 与开源版本标签。
+- `xiaohuang-reminder-public` 继续只维护产品介绍、安装说明、下载 Release、截图、更新日志与 FAQ。
+- 公开同步前必须执行测试、敏感信息检查和第三方许可证检查；任何证书、描述文件、密钥、用户数据与本地构建产物均不得上传。

@@ -1,5 +1,7 @@
 import { Lunar, LunarYear, Solar } from "lunar-javascript";
 
+const lunarSummaryCache = new Map();
+const lunarPreviewCache = new Map();
 const almanacCache = new Map();
 
 export const ALMANAC_REFERENCES = [
@@ -39,8 +41,8 @@ function parseDateKey(dateKey) {
   return { year, month, day };
 }
 
-export function lunarInfoForDate(dateKey) {
-  if (almanacCache.has(dateKey)) return almanacCache.get(dateKey);
+export function lunarSummaryForDate(dateKey) {
+  if (lunarSummaryCache.has(dateKey)) return lunarSummaryCache.get(dateKey);
   const parts = parseDateKey(dateKey);
   if (!parts) return null;
   try {
@@ -51,7 +53,6 @@ export function lunarInfoForDate(dateKey) {
     const dayName = lunar.getDayInChinese();
     const festivals = [...lunar.getFestivals(), ...lunar.getOtherFestivals()];
     const jieQi = lunar.getJieQi();
-    const dayNineStar = lunar.getDayNineStar();
     const result = {
       dateKey,
       lunarLabel: dayName === "初一" ? monthName : dayName,
@@ -60,6 +61,24 @@ export function lunarInfoForDate(dateKey) {
       dayGanZhi: `${lunar.getDayInGanZhi()}日`,
       jieQi,
       festivals,
+    };
+    lunarSummaryCache.set(dateKey, result);
+    return result;
+  } catch {
+    return null;
+  }
+}
+
+export function lunarPreviewForDate(dateKey) {
+  if (lunarPreviewCache.has(dateKey)) return lunarPreviewCache.get(dateKey);
+  const parts = parseDateKey(dateKey);
+  const summary = lunarSummaryForDate(dateKey);
+  if (!parts || !summary) return null;
+  try {
+    const lunar = Solar.fromYmd(parts.year, parts.month, parts.day).getLunar();
+    const dayNineStar = lunar.getDayNineStar();
+    const result = {
+      ...summary,
       yi: lunar.getDayYi(),
       ji: lunar.getDayJi(),
       goodSpirits: lunar.getDayJiShen(),
@@ -78,6 +97,23 @@ export function lunarInfoForDate(dateKey) {
       seasonalPhenology: `${lunar.getHou()} · ${lunar.getWuHou()}`,
       dayLu: lunar.getDayLu(),
       nineStar: `${dayNineStar.toString()} · ${dayNineStar.getPosition()}（${dayNineStar.getPositionDesc()}） · 玄空${dayNineStar.getNameInXuanKong()}${dayNineStar.getLuckInXuanKong()}`,
+    };
+    lunarPreviewCache.set(dateKey, result);
+    return result;
+  } catch {
+    return null;
+  }
+}
+
+export function lunarInfoForDate(dateKey) {
+  if (almanacCache.has(dateKey)) return almanacCache.get(dateKey);
+  const parts = parseDateKey(dateKey);
+  const preview = lunarPreviewForDate(dateKey);
+  if (!parts || !preview) return null;
+  try {
+    const lunar = Solar.fromYmd(parts.year, parts.month, parts.day).getLunar();
+    const result = {
+      ...preview,
       timeSlots: lunar.getTimes().map((time) => ({
         range: `${time.getMinHm()}—${time.getMaxHm()}`,
         ganZhi: time.getGanZhi(),
@@ -95,7 +131,7 @@ export function lunarInfoForDate(dateKey) {
 }
 
 export function lunarCellLabel(dateKey) {
-  const info = lunarInfoForDate(dateKey);
+  const info = lunarSummaryForDate(dateKey);
   if (!info) return "";
   return info.jieQi || info.festivals[0] || info.lunarLabel;
 }

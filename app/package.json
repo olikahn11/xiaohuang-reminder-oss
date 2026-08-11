@@ -1,7 +1,16 @@
 {
   "name": "xuji",
-  "version": "0.3.0",
+  "version": "0.6.1",
   "private": true,
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/olikahn11/xiaohuang-reminder-oss#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/olikahn11/xiaohuang-reminder-oss.git"
+  },
+  "bugs": {
+    "url": "https://github.com/olikahn11/xiaohuang-reminder-oss/issues"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -14,7 +23,9 @@
     "native:dev": "tauri dev",
     "native:build:mac": "tauri build --bundles app,dmg --target aarch64-apple-darwin",
     "native:ios:init": "tauri ios init --ci",
-    "native:ios:build:sim": "tauri ios build --debug --target aarch64-sim --no-sign --ci"
+    "native:ios:sync-icons": "node scripts/sync-ios-icons.mjs",
+    "native:ios:build:sim": "npm run native:ios:sync-icons && tauri ios build --debug --target aarch64-sim --no-sign --ci",
+    "native:ios:build:device": "npm run native:ios:sync-icons && tauri ios build --target aarch64 --no-sign --ci"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
@@ -32,7 +43,7 @@
     "qrcode": "^1.5.4",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "vite": "6.4.2"
+    "vite": "^6.4.3"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.11.4"

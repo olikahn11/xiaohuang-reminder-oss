@@ -36,6 +36,7 @@ import {
   saveEncryptedFile,
   startNearbyTransfer,
 } from "./native.js";
+import { useSwipeDownToClose } from "./ThemedSelect.jsx";
 
 const QR_FORMAT = "xuji-nearby-link";
 
@@ -66,6 +67,7 @@ export function SecurityCenter({
   onCloudDownload,
   notify,
 }) {
+  const swipe = useSwipeDownToClose(onClose);
   const [tab, setTab] = useState("security");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -155,7 +157,8 @@ export function SecurityCenter({
     <AnimatePresence>
       {open ? (
         <motion.div className="modal-backdrop security-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
-          <motion.section className="settings-panel security-center glass-layer" initial={{ x: "105%", opacity: 0.7 }} animate={{ x: 0, opacity: 1 }} exit={{ x: "105%", opacity: 0.7 }} transition={{ type: "spring", stiffness: 300, damping: 32 }}>
+          <motion.section className="settings-panel security-center glass-layer" initial={{ x: "105%", opacity: 0.7 }} animate={{ x: 0, opacity: 1 }} exit={{ x: "105%", opacity: 0.7 }} transition={{ type: "spring", stiffness: 300, damping: 32 }} {...swipe}>
+            <span className="sheet-handle" />
             <div className="modal-head security-head"><div><p className="eyebrow">零服务器 · 本地优先</p><h2>安全与传输中心</h2></div><button className="icon-button" onClick={onClose}><X size={22} /></button></div>
             <nav className="security-tabs">{tabs.map(([value, Icon, label]) => <button key={value} className={tab === value ? "active" : ""} onClick={() => setTab(value)}><Icon size={19} /><span>{label}</span></button>)}</nav>
 

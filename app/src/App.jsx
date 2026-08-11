@@ -39,6 +39,7 @@ import {
   GearSix,
   Globe,
   HardDrives,
+  House,
   HourglassHigh,
   IdentificationBadge,
   Key,
@@ -63,12 +64,15 @@ import {
   lunarCellLabel,
   lunarDayLabel,
   lunarInfoForDate,
+  lunarPreviewForDate,
   lunarMonthOptions,
   lunarPartsForSolarDate,
+  lunarSummaryForDate,
   solarDateKeyFromLunar,
 } from "./lunarCalendar.js";
-import { FORM_DEFAULTS, RECORD_FORM_CONFIG, defaultStatusForKind, fieldsForKind } from "./recordFields.js";
+import { FORM_DEFAULTS, PRIMARY_FIELDS_BY_KIND, RECORD_FORM_CONFIG, defaultStatusForKind, fieldsForKind } from "./recordFields.js";
 import { SecurityCenter } from "./SecurityCenter.jsx";
+import { ThemedSelect, useSwipeDownToClose } from "./ThemedSelect.jsx";
 import {
   LOCK_CONFIG_KEY,
   RECORDS_KEY,
@@ -105,6 +109,15 @@ async function openExternal(url) {
     return;
   }
   window.open(url, "_blank", "noopener,noreferrer");
+}
+
+async function openNotificationSettings() {
+  if (!isTauri()) return false;
+  const settingsUrl = /Macintosh/i.test(navigator.userAgent)
+    ? "x-apple.systempreferences:com.apple.Notifications-Settings.extension"
+    : "app-settings:";
+  await openUrl(settingsUrl);
+  return true;
 }
 
 function reminderId(recordId, daysBefore) {
@@ -158,6 +171,8 @@ async function scheduleRenewalReminders(records) {
 }
 
 const iconMap = {
+  home: House,
+  hub: SquaresFour,
   overview: SquaresFour,
   project: FolderSimple,
   account: IdentificationBadge,
@@ -166,12 +181,14 @@ const iconMap = {
   developer: Code,
   publish: Article,
   pending: CheckSquare,
+  custom: List,
   almanac: Sparkle,
 };
 
 const kindIcons = {
   renewal: ClockCountdown,
   pending: HourglassHigh,
+  custom: List,
   project: AppWindow,
   account: Key,
   server: HardDrives,
@@ -195,6 +212,43 @@ function localDateKey(date = new Date()) {
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
+}
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(() => window.matchMedia("(max-width: 700px)").matches);
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 700px)");
+    const update = () => setIsMobile(media.matches);
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
+  return isMobile;
+}
+
+function useMobileChromeAutoHide(isMobile, paused) {
+  const [hidden, setHidden] = useState(false);
+  const lastYRef = useRef(0);
+
+  useEffect(() => {
+    if (!isMobile || paused) {
+      setHidden(false);
+      return undefined;
+    }
+
+    lastYRef.current = window.scrollY;
+    const onScroll = () => {
+      const currentY = Math.max(0, window.scrollY);
+      const delta = currentY - lastYRef.current;
+      if (currentY < 56) setHidden(false);
+      else if (delta > 5 && currentY > 96) setHidden(true);
+      else if (delta < -3) setHidden(false);
+      lastYRef.current = currentY;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [isMobile, paused]);
+
+  return [hidden, setHidden];
 }
 
 function greetingCopy() {
@@ -295,7 +349,7 @@ function Sidebar({ activeKind, onNavigate, onQuickAdd, onSettings }) {
   return (
     <aside className="sidebar glass-layer">
       <button className="brand" onClick={() => onNavigate("overview")} aria-label="返回总览">
-        <img src="/assets/app-icon.png" alt="小黄提醒管家" />
+        <img src="/assets/app-icon-flat.png?v=052" alt="小黄提醒管家" />
         <span>小黄提醒</span>
       </button>
 
@@ -334,38 +388,49 @@ function Sidebar({ activeKind, onNavigate, onQuickAdd, onSettings }) {
   );
 }
 
-function MobileNav({ activeKind, onNavigate }) {
-  const items = [NAVIGATION[0], NAVIGATION[1], NAVIGATION[3], NAVIGATION[7]];
+function MobileNav({ activeKind, onNavigate, onAdd, onSettings, settingsOpen }) {
+  const items = [
+    { kind: "overview", label: "首页", Icon: House },
+    { kind: "hub", label: "总览", Icon: SquaresFour },
+  ];
   return (
     <nav className="mobile-nav glass-layer" aria-label="移动端导航">
-      {items.slice(0, 2).map((item) => {
-        const Icon = iconMap[item.icon];
-        return <button key={item.kind} className={activeKind === item.kind ? "active" : ""} onClick={() => onNavigate(item.kind)}><Icon size={22} /><span>{item.label}</span></button>;
-      })}
-      <button className="mobile-add" onClick={() => onNavigate("overview")}><CalendarBlank size={25} weight="bold" /><span>日历</span></button>
-      {items.slice(2).map((item) => {
-        const Icon = iconMap[item.icon];
-        return <button key={item.kind} className={activeKind === item.kind ? "active" : ""} onClick={() => onNavigate(item.kind)}><Icon size={22} /><span>{item.label}</span></button>;
-      })}
+      {items.map(({ kind, label, Icon }) => <button key={kind} className={activeKind === kind ? "active" : ""} onClick={() => onNavigate(kind)}><Icon size={22} weight={activeKind === kind ? "fill" : "regular"} /><span>{label}</span></button>)}
+      <button className="mobile-add" onClick={onAdd} aria-label="新增记录"><Plus size={27} weight="bold" /><span>新增</span></button>
+      <button className={activeKind === "almanac" ? "active" : ""} onClick={() => onNavigate("almanac")}><Sparkle size={22} weight={activeKind === "almanac" ? "fill" : "regular"} /><span>黄历</span></button>
+      <button className={settingsOpen ? "active" : ""} onClick={onSettings}><GearSix size={22} weight={settingsOpen ? "fill" : "regular"} /><span>设置</span></button>
     </nav>
   );
 }
 
-function Topbar({ query, setQuery, onQuickAdd, onNotifications, onSettings, lockEnabled, cloudEnabled, notificationCount }) {
+function MobileMoreSheet({ open, activeKind, onClose, onNavigate, onSettings }) {
+  const swipe = useSwipeDownToClose(onClose);
+  const kinds = NAVIGATION.filter((item) => !["overview", "project", "pending"].includes(item.kind));
+  return <AnimatePresence>{open ? <motion.div className="mobile-sheet-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
+    <motion.section className="mobile-more-sheet" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} transition={{ type: "spring", stiffness: 330, damping: 34 }} {...swipe}>
+      <span className="sheet-handle" />
+      <div className="mobile-sheet-head"><div><small>全部功能</small><h2>选择要管理的内容</h2></div><button type="button" className="icon-button" onClick={onClose} aria-label="关闭更多功能"><X size={21} /></button></div>
+      <div className="mobile-more-grid">{kinds.map((item) => { const Icon = iconMap[item.icon]; return <button type="button" className={activeKind === item.kind ? "active" : ""} key={item.kind} onClick={() => { onNavigate(item.kind); onClose(); }}><Icon size={23} /><span><strong>{item.label}</strong><small>查看、新增与编辑</small></span><CaretRight size={16} /></button>; })}</div>
+      <button type="button" className="mobile-settings-row" onClick={() => { onSettings(); onClose(); }}><GearSix size={21} /><span>安全、传输与设置</span><CaretRight size={16} /></button>
+    </motion.section>
+  </motion.div> : null}</AnimatePresence>;
+}
+
+function Topbar({ query, setQuery, onQuickAdd, onNotifications, lockEnabled, cloudEnabled, notificationCount }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const todayCopy = new Intl.DateTimeFormat("zh-CN", { year: "numeric", month: "long", day: "numeric", weekday: "long" }).format(new Date());
   return (
     <header className="topbar">
       <div className="greeting">
         <p className="eyebrow">{todayCopy}</p>
-        <h1>{greetingCopy()} <span><Sparkle size={14} weight="fill" /> 今日计划</span></h1>
+        <h1><b>{greetingCopy()}</b><span><Sparkle size={14} weight="fill" /> 今日计划</span></h1>
         <div className="security-row">
           <span><ShieldCheck size={17} />本地安全：<strong>{lockEnabled ? "已加密" : "未开启锁"}</strong></span>
           <span><CloudCheck size={17} />iCloud：{cloudEnabled ? "密文同步中" : "未开启"}</span>
         </div>
       </div>
       <div className="topbar-actions">
-        <button className="icon-button mobile-settings" onClick={onSettings} aria-label="打开安全与传输中心"><GearSix size={21} /></button>
+        <button className="mobile-notification-action" onClick={onNotifications} aria-label="通知"><Bell size={20} weight="fill" /><span>通知</span>{notificationCount ? <em>{notificationCount}</em> : null}</button>
         <AnimatePresence initial={false}>
           {searchOpen ? (
             <motion.label className="search-field glass-layer" initial={{ width: 42, opacity: 0 }} animate={{ width: 250, opacity: 1 }} exit={{ width: 42, opacity: 0 }}>
@@ -424,7 +489,7 @@ function MonthYearPicker({ year, month, onChange, compact = false }) {
     </button>
     <AnimatePresence>
       {open ? <motion.div className="month-year-popover" initial={{ opacity: 0, y: -7, scale: .96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -5 }}>
-        <div className="month-year-popover__head"><label><span>年份</span><select value={year} onChange={(event) => onChange(Number(event.target.value), month)}>{CALENDAR_YEARS.map((item) => <option key={item} value={item}>{item} 年</option>)}</select></label><button type="button" className="month-year-close" onClick={() => setOpen(false)} aria-label="关闭年月选择"><X size={16} /></button></div>
+        <div className="month-year-popover__head"><label><span>年份</span><ThemedSelect compact value={year} ariaLabel="选择年份" onChange={(nextYear) => onChange(Number(nextYear), month)} options={CALENDAR_YEARS.map((item) => [item, `${item} 年`])} /></label><button type="button" className="month-year-close" onClick={() => setOpen(false)} aria-label="关闭年月选择"><X size={16} /></button></div>
         <div className="month-grid">{Array.from({ length: 12 }, (_, index) => <button type="button" className={month === index ? "active" : ""} key={index} onClick={() => { onChange(year, index); setOpen(false); }}>{index + 1} 月</button>)}</div>
         <small>可选择 1900—2100 年</small>
       </motion.div> : null}
@@ -468,12 +533,12 @@ function ChineseDatePicker({ value, onChange }) {
   return <div className="date-picker">
     <button type="button" className="date-picker__trigger" onClick={toggleOpen}>
       <CalendarBlank size={18} />
-      <span>{value ? <>{formatDate(value)}<small>{lunarInfoForDate(value)?.lunarDate}</small></> : "选择日期（公历 / 农历）"}</span>
+      <span>{value ? <>{formatDate(value)}<small>{lunarSummaryForDate(value)?.lunarDate}</small></> : "选择日期（公历 / 农历）"}</span>
       <CaretDown size={15} />
     </button>
     <AnimatePresence>
       {open ? <motion.div className="date-picker__popover" initial={{ opacity: 0, y: -8, scale: .97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6 }}>
-        <div className="date-picker__mode"><button type="button" className={mode === "solar" ? "active" : ""} onClick={() => setMode("solar")}>公历选择</button><button type="button" className={mode === "lunar" ? "active" : ""} onClick={() => setMode("lunar")}>农历选择</button></div>
+        <div className="date-picker__top"><div className="date-picker__mode"><button type="button" className={mode === "solar" ? "active" : ""} onClick={() => setMode("solar")}>公历选择</button><button type="button" className={mode === "lunar" ? "active" : ""} onClick={() => setMode("lunar")}>农历选择</button></div><button type="button" className="month-year-close" onClick={() => setOpen(false)} aria-label="关闭日期选择"><X size={16} /></button></div>
         {mode === "solar" ? <>
           <div className="date-picker__head">
             <button type="button" onClick={() => setCursor(new Date(year, month - 1, 1))}><CaretLeft size={17} /></button>
@@ -490,11 +555,11 @@ function ChineseDatePicker({ value, onChange }) {
           </div>
         </> : <div className="lunar-picker-panel">
           <div className="lunar-picker-selects">
-            <label><span>农历年</span><select value={lunarSelection.year} onChange={(event) => changeLunarYear(Number(event.target.value))}>{CALENDAR_YEARS.map((item) => <option key={item} value={item}>{item} 年</option>)}</select></label>
-            <label><span>农历月</span><select value={selectedLunarMonth?.value || 1} onChange={(event) => { const nextMonth = lunarMonths.find((item) => item.value === Number(event.target.value)); setLunarSelection((current) => ({ ...current, month: Number(event.target.value), day: Math.min(current.day, nextMonth?.dayCount || 29) })); }}>{lunarMonths.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>
-            <label><span>农历日</span><select value={Math.min(lunarSelection.day, selectedLunarMonth?.dayCount || 29)} onChange={(event) => setLunarSelection((current) => ({ ...current, day: Number(event.target.value) }))}>{Array.from({ length: selectedLunarMonth?.dayCount || 29 }, (_, index) => index + 1).map((day) => <option key={day} value={day}>{lunarDayLabel(lunarSelection.year, selectedLunarMonth?.value || 1, day)}</option>)}</select></label>
+            <label><span>农历年</span><ThemedSelect value={lunarSelection.year} ariaLabel="选择农历年" onChange={(nextYear) => changeLunarYear(Number(nextYear))} options={CALENDAR_YEARS.map((item) => [item, `${item} 年`])} /></label>
+            <label><span>农历月</span><ThemedSelect value={selectedLunarMonth?.value || 1} ariaLabel="选择农历月" onChange={(nextValue) => { const nextMonth = lunarMonths.find((item) => item.value === Number(nextValue)); setLunarSelection((current) => ({ ...current, month: Number(nextValue), day: Math.min(current.day, nextMonth?.dayCount || 29) })); }} options={lunarMonths.map((item) => [item.value, item.label])} /></label>
+            <label><span>农历日</span><ThemedSelect value={Math.min(lunarSelection.day, selectedLunarMonth?.dayCount || 29)} ariaLabel="选择农历日" onChange={(nextDay) => setLunarSelection((current) => ({ ...current, day: Number(nextDay) }))} options={Array.from({ length: selectedLunarMonth?.dayCount || 29 }, (_, index) => index + 1).map((day) => [day, lunarDayLabel(lunarSelection.year, selectedLunarMonth?.value || 1, day)])} /></label>
           </div>
-          <div className="lunar-conversion-preview"><Sparkle size={20} /><span><strong>{lunarPreviewDate ? lunarInfoForDate(lunarPreviewDate)?.lunarDate : "请选择农历日期"}</strong><small>{lunarPreviewDate ? `对应公历 ${formatDate(lunarPreviewDate)}` : ""}</small></span></div>
+          <div className="lunar-conversion-preview"><Sparkle size={20} /><span><strong>{lunarPreviewDate ? lunarSummaryForDate(lunarPreviewDate)?.lunarDate : "请选择农历日期"}</strong><small>{lunarPreviewDate ? `对应公历 ${formatDate(lunarPreviewDate)}` : ""}</small></span></div>
           <button type="button" className="lunar-picker-confirm" disabled={!lunarPreviewDate} onClick={() => { onChange(lunarPreviewDate); const converted = new Date(`${lunarPreviewDate}T12:00:00`); setCursor(new Date(converted.getFullYear(), converted.getMonth(), 1)); setOpen(false); }}>使用这个农历日期</button>
         </div>}
         <button type="button" className="date-picker__today" onClick={() => { const today = new Date(); setCursor(new Date(today.getFullYear(), today.getMonth(), 1)); onChange(localDateKey(today)); setOpen(false); }}>选择今天</button>
@@ -524,6 +589,7 @@ function CinematicCalendar({ records, onOpen, onAdd, onViewAlmanac }) {
   const today = new Date();
   const [cursor, setCursor] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
   const [selectedDate, setSelectedDate] = useState(localDateKey(today));
+  const [monthDirection, setMonthDirection] = useState(1);
   const year = cursor.getFullYear();
   const month = cursor.getMonth();
   const leading = new Date(year, month, 1).getDay();
@@ -536,16 +602,20 @@ function CinematicCalendar({ records, onOpen, onAdd, onViewAlmanac }) {
     return result;
   }, {});
   const selectedRecords = recordsByDate[selectedDate] || [];
-  const selectedAlmanac = lunarInfoForDate(selectedDate);
+  const selectedAlmanac = lunarPreviewForDate(selectedDate);
   const monthCount = datedRecords.filter((record) => {
     const date = new Date(`${record.dueDate}T12:00:00`);
     return date.getFullYear() === year && date.getMonth() === month;
   }).length;
 
   const goToMonth = (nextYear, nextMonth, preferredDay = 1) => {
-    const day = Math.min(preferredDay, new Date(nextYear, nextMonth + 1, 0).getDate());
-    setCursor(new Date(nextYear, nextMonth, 1));
-    setSelectedDate(localDateKey(new Date(nextYear, nextMonth, day)));
+    const targetMonth = new Date(nextYear, nextMonth, 1);
+    const targetYear = targetMonth.getFullYear();
+    const targetMonthIndex = targetMonth.getMonth();
+    const day = Math.min(preferredDay, new Date(targetYear, targetMonthIndex + 1, 0).getDate());
+    setMonthDirection(targetMonth.getTime() >= cursor.getTime() ? 1 : -1);
+    setCursor(targetMonth);
+    setSelectedDate(localDateKey(new Date(targetYear, targetMonthIndex, day)));
   };
 
   return <motion.section className="cinema-calendar content-surface" layout>
@@ -565,7 +635,8 @@ function CinematicCalendar({ records, onOpen, onAdd, onViewAlmanac }) {
     <div className="calendar-layout">
       <div className="month-stage">
         <div className="calendar-week">{["周日", "周一", "周二", "周三", "周四", "周五", "周六"].map((day) => <span key={day}>{day}</span>)}</div>
-        <div className="calendar-days">
+        <AnimatePresence mode="wait" initial={false}>
+        <motion.div key={`${year}-${month}`} className="calendar-days" initial={{ opacity: 0, x: monthDirection * 28, clipPath: monthDirection > 0 ? "inset(0 0 0 18%)" : "inset(0 18% 0 0)" }} animate={{ opacity: 1, x: 0, clipPath: "inset(0 0 0 0)" }} exit={{ opacity: 0, x: monthDirection * -18, clipPath: monthDirection > 0 ? "inset(0 16% 0 0)" : "inset(0 0 0 16%)" }} transition={{ duration: .32, ease: [.22, .75, .2, 1] }}>
           {cells.map((day, index) => {
             if (!day) return <span className="calendar-day blank" key={`blank-${index}`} />;
             const date = localDateKey(new Date(year, month, day));
@@ -578,16 +649,17 @@ function CinematicCalendar({ records, onOpen, onAdd, onViewAlmanac }) {
               {events.length ? <small>{events.length} 项</small> : null}
             </motion.button>;
           })}
-        </div>
+        </motion.div>
+        </AnimatePresence>
       </div>
       <aside className="day-agenda">
-        <div className="day-agenda__head"><span>{formatDate(selectedDate)}</span><button onClick={() => onAdd("pending", selectedDate)}><Plus size={16} />在这天新增</button></div>
-        {selectedAlmanac ? <div className="almanac-day-preview">
+        <div className="day-agenda__head"><span><small>当天场次</small>{formatDate(selectedDate)}</span><button onClick={() => onAdd("pending", selectedDate)}><Plus size={16} />在这天新增</button></div>
+        {selectedAlmanac ? <motion.div key={`almanac-${selectedDate}`} className="almanac-day-preview" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .24 }}>
           <div><span className="almanac-mark"><Sparkle size={18} weight="fill" /></span><span><strong>{selectedAlmanac.lunarDate}</strong><small>{selectedAlmanac.lunarYear} · {selectedAlmanac.dayGanZhi}</small></span></div>
           <div className="almanac-preview-tags"><span>{selectedAlmanac.duty}</span><span>{selectedAlmanac.dayOfficer}</span></div>
           <p><em>宜</em>{selectedAlmanac.yi.slice(0, 4).join("、") || "无特别条目"}</p>
           <button type="button" onClick={() => onViewAlmanac(selectedDate)}>查看这天完整黄历 <CaretRight size={14} /></button>
-        </div> : null}
+        </motion.div> : null}
         <AnimatePresence mode="popLayout">
           {selectedRecords.length ? selectedRecords.map((record) => {
             const Icon = kindIcons[record.kind] || BellRinging;
@@ -618,27 +690,34 @@ function AlmanacDetailCard({ date }) {
       <div><small>冲煞</small><strong>{info.clash}</strong></div>
       <div><small>纳音</small><strong>{info.naYin}</strong></div>
       <div><small>星宿</small><strong>{info.mansion}</strong></div>
-      <div className="wide"><small>传统方位</small><strong>{info.luckyDirections}</strong></div>
-      {info.festivals.length ? <div className="wide"><small>传统节日</small><strong>{info.festivals.join("、")}</strong></div> : null}
-      <div className="wide"><small>胎神方位</small><strong>{info.fetalGod}</strong></div>
-      <div className="wide"><small>太岁方位</small><strong>{info.taiSui}</strong></div>
-      <div className="wide"><small>日九星</small><strong>{info.nineStar}</strong></div>
-      <div><small>月相</small><strong>{info.moonPhase}</strong></div>
-      <div><small>六曜</small><strong>{info.liuYao}</strong></div>
-      <div className="wide"><small>物候</small><strong>{info.seasonalPhenology}</strong></div>
-      <div className="wide"><small>日禄</small><strong>{info.dayLu}</strong></div>
     </div>
     <div className="almanac-yi-ji">
       <section className="almanac-yi"><h4><span>宜</span>传统事项</h4><div>{info.yi.length ? info.yi.map((item) => <span key={item}>{item}</span>) : <span>无特别条目</span>}</div></section>
       <section className="almanac-ji"><h4><span>忌</span>传统事项</h4><div>{info.ji.length ? info.ji.map((item) => <span key={item}>{item}</span>) : <span>无特别条目</span>}</div></section>
     </div>
-    <div className="almanac-spirits"><div><small>传统吉神条目</small><p>{info.goodSpirits.join("、") || "无特别条目"}</p></div><div><small>传统慎用条目</small><p>{info.cautionItems.join("、") || "无特别条目"}</p></div></div>
-    <div className="almanac-pengzu"><div><small>彭祖百忌</small>{info.pengZu.map((item) => <p key={item}>{item}</p>)}</div><span>古代警句，仅作民俗文献展示，不应按字面推断现实后果。</span></div>
-    <details className="almanac-time-details" open>
+    <details className="almanac-extra-details">
+      <summary><span><Sparkle size={18} />更多传统信息</span><small>方位、九星、物候、吉神与百忌</small></summary>
+      <div className="almanac-extra-content">
+        <div className="almanac-secondary-facts">
+          <div><small>传统方位</small><strong>{info.luckyDirections}</strong></div>
+          {info.festivals.length ? <div><small>传统节日</small><strong>{info.festivals.join("、")}</strong></div> : null}
+          <div><small>胎神方位</small><strong>{info.fetalGod}</strong></div>
+          <div><small>太岁方位</small><strong>{info.taiSui}</strong></div>
+          <div><small>日九星</small><strong>{info.nineStar}</strong></div>
+          <div><small>月相</small><strong>{info.moonPhase}</strong></div>
+          <div><small>六曜</small><strong>{info.liuYao}</strong></div>
+          <div><small>物候</small><strong>{info.seasonalPhenology}</strong></div>
+          <div><small>日禄</small><strong>{info.dayLu}</strong></div>
+        </div>
+        <div className="almanac-spirits"><div><small>传统吉神条目</small><p>{info.goodSpirits.join("、") || "无特别条目"}</p></div><div><small>传统慎用条目</small><p>{info.cautionItems.join("、") || "无特别条目"}</p></div></div>
+        <div className="almanac-pengzu"><div><small>彭祖百忌</small>{info.pengZu.map((item) => <p key={item}>{item}</p>)}</div><span>古代警句，仅作民俗文献展示，不应按字面推断现实后果。</span></div>
+      </div>
+    </details>
+    <details className="almanac-time-details">
       <summary><span><ClockCountdown size={18} />传统时辰参考</span><small>展开查看 13 个时段的神煞与宜忌</small></summary>
       <div className="almanac-time-grid">{info.timeSlots.map((slot) => <div className={`almanac-time-card ${slot.luck === "吉" ? "good" : "caution"}`} key={`${slot.range}-${slot.ganZhi}`}><div><strong>{slot.range}</strong><span>{slot.ganZhi}时 · {slot.officer}</span><em>{slot.luck}</em></div><p><b>宜</b>{slot.yi.slice(0, 5).join("、") || "无特别条目"}</p><p><b>忌</b>{slot.ji.slice(0, 5).join("、") || "无特别条目"}</p></div>)}</div>
     </details>
-    <details className="almanac-source-details" open>
+    <details className="almanac-source-details">
       <summary><span><Article size={18} />重要传统来源</span><small>四个影响较大的官修与民间文献体系</small></summary>
       <div className="almanac-source-grid">{ALMANAC_REFERENCES.map((source) => <article key={source.title}><div><span>{source.badge}</span><h4>{source.title}</h4></div><small>{source.edition}</small><p>{source.focus}</p><em>{source.reliability}</em></article>)}</div>
       <p className="almanac-source-boundary">当前日期数值由 lunar-javascript 1.7.7 计算；上列古籍用于说明传统知识谱系，不表示软件已逐卷逐条对勘，也不把不同版本强行合成一个结论。</p>
@@ -676,6 +755,65 @@ function OverviewPortals({ records, onNavigate }) {
       <i style={{ "--portal-delay": `${index * -1.8}s` }} />
     </motion.button>)}
   </section>;
+}
+
+function UpcomingTasks({ records, onOpen, onViewAll, onAdd }) {
+  const today = localDateKey(new Date());
+  const upcoming = records
+    .filter((record) => record.dueDate && record.status !== "handled" && record.dueDate >= today)
+    .sort((a, b) => `${a.dueDate}${a.dueTime || "23:59"}`.localeCompare(`${b.dueDate}${b.dueTime || "23:59"}`))
+    .slice(0, 6);
+
+  return <section className="upcoming-tasks content-surface">
+    <div className="upcoming-tasks__head">
+      <div><p className="eyebrow">接下来</p><h2>马上要到期</h2><span>按时间排序，只显示仍需处理的事项</span></div>
+      <button type="button" onClick={onViewAll}>查看全部 <CaretRight size={16} /></button>
+    </div>
+    {upcoming.length ? <div className="upcoming-tasks__list">{upcoming.map((record) => {
+      const Icon = kindIcons[record.kind] || BellRinging;
+      const days = remainingDays(record.dueDate);
+      const dayCopy = days === 0 ? "今天" : days === 1 ? "明天" : `${days} 天后`;
+      return <button type="button" key={record.id} onClick={() => onOpen(record)}>
+        <span className="upcoming-tasks__date"><strong>{new Date(`${record.dueDate}T12:00:00`).getDate()}</strong><small>{new Intl.DateTimeFormat("zh-CN", { month: "short" }).format(new Date(`${record.dueDate}T12:00:00`))}</small></span>
+        <span className="upcoming-tasks__icon"><Icon size={20} /></span>
+        <span className="upcoming-tasks__copy"><strong>{recordTitle(record)}</strong><small>{record.dueTime || "全天"} · {KIND_LABELS[record.kind]}</small></span>
+        <em className={days <= 1 ? "urgent" : ""}>{dayCopy}</em>
+        <CaretRight size={17} />
+      </button>;
+    })}</div> : <div className="upcoming-tasks__empty"><CheckCircle size={30} weight="duotone" /><span><strong>近期没有待处理事项</strong><small>新增日期与时间后，会按先后顺序显示在这里。</small></span><button type="button" onClick={() => onAdd("pending")}>新增待办</button></div>}
+  </section>;
+}
+
+function OverviewHub({ records, onNavigate }) {
+  const sections = [
+    { kind: "project", label: "项目", copy: "项目与关联资料", Icon: FolderSimple },
+    { kind: "renewal", label: "订阅续费", copy: "费用、周期与到期日", Icon: ArrowsClockwise },
+    { kind: "pending", label: "待办与确认", copy: "任务、申请和等待结果", Icon: CheckSquare },
+    { kind: "account", label: "账号与绑定", copy: "账号归属与验证方式", Icon: IdentificationBadge },
+    { kind: "server", label: "服务器", copy: "主机、域名和证书", Icon: HardDrives },
+    { kind: "developer", label: "开发者资质", copy: "平台资质与有效期", Icon: Code },
+    { kind: "publish", label: "发布记录", copy: "版本、审核与上线记录", Icon: Article },
+    { kind: "custom", label: "自定义记录", copy: "字段和内容完全由你添加", Icon: List },
+  ];
+  const active = records.filter((record) => record.status !== "handled").length;
+  const dated = records.filter((record) => record.dueDate && record.status !== "handled").length;
+
+  return <motion.section className="overview-hub" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
+    <div className="collection-head overview-hub__head"><div><p className="eyebrow">全部资料</p><h2>总览</h2><p>按用途进入分类，查看、编辑或删除对应的全部内容。</p></div></div>
+    <div className="overview-hub__summary content-surface">
+      <span><small>全部记录</small><strong>{records.length}</strong></span>
+      <span><small>仍需处理</small><strong>{active}</strong></span>
+      <span><small>已设日期</small><strong>{dated}</strong></span>
+    </div>
+    <div className="overview-hub__grid">{sections.map(({ kind, label, copy, Icon }) => {
+      const count = records.filter((record) => record.kind === kind).length;
+      return <motion.button type="button" key={kind} className="overview-hub__card content-surface" onClick={() => onNavigate(kind)} whileTap={{ scale: .975 }}>
+        <span className="overview-hub__icon"><Icon size={24} weight="duotone" /></span>
+        <span><strong>{label}</strong><small>{copy}</small></span>
+        <em>{count} 项</em><CaretRight size={18} />
+      </motion.button>;
+    })}</div>
+  </motion.section>;
 }
 
 function HeroRenewal({ record, onOpen, onHandled }) {
@@ -808,6 +946,7 @@ function CollectionView({ kind, records, query, onSelect, onQuickAdd }) {
 
 function DetailDrawer({ record, onClose, onHandled, onDelete, onEdit, onAddRelated, handledAnimation }) {
   const [reveal, setReveal] = useState(false);
+  const swipe = useSwipeDownToClose(onClose);
   if (!record) return null;
   const canHandle = record.kind === "renewal" || record.kind === "pending" || record.kind === "almanac";
   const detailIcons = {
@@ -832,7 +971,7 @@ function DetailDrawer({ record, onClose, onHandled, onDelete, onEdit, onAddRelat
   };
   const formatFieldValue = (field) => {
     const value = record[field.key];
-    if (field.key === "dueDate" && value) return `${formatDate(value)} · ${lunarInfoForDate(value)?.lunarDate || ""}`;
+    if (field.key === "dueDate" && value) return `${formatDate(value)} · ${lunarSummaryForDate(value)?.lunarDate || ""}`;
     if (field.key === "amount" && value !== "" && value != null) return money(value);
     return value;
   };
@@ -855,7 +994,9 @@ function DetailDrawer({ record, onClose, onHandled, onDelete, onEdit, onAddRelat
       animate={{ x: 0, opacity: 1, filter: "blur(0px)" }}
       exit={{ x: "105%", opacity: 0, filter: "blur(8px)" }}
       transition={{ type: "spring", stiffness: 260, damping: 30 }}
+      {...swipe}
     >
+      <span className="sheet-handle" />
       <div className="drawer-head">
         <div><StatusPill status={record.status} /><h2>{recordTitle(record)}</h2><p>{record.subtitle || KIND_LABELS[record.kind]}</p></div>
         <div className="drawer-head__actions"><button className="icon-button" onClick={() => onEdit(record)} aria-label="编辑记录"><PencilSimple size={21} /></button><button className="icon-button" onClick={onClose} aria-label="关闭详情"><X size={23} /></button></div>
@@ -913,19 +1054,29 @@ function RecordFormField({ field, form, setForm }) {
   const setValue = (nextValue) => setForm((current) => ({ ...current, [field.key]: nextValue }));
   const className = field.wide ? "span-two" : "";
   if (field.type === "date") return <label className={className}><span>{field.label}</span><ChineseDatePicker value={value} onChange={setValue} /></label>;
-  if (field.type === "select") return <label className={className}><span>{field.label}</span><select value={value} onChange={(event) => setValue(event.target.value)}>{(field.options || []).map(([optionValue, label]) => <option key={`${field.key}-${optionValue}`} value={optionValue}>{label}</option>)}</select></label>;
+  if (field.type === "select") return <div className={`form-field ${className}`}><span>{field.label}</span><ThemedSelect value={value} options={field.options || []} onChange={setValue} ariaLabel={`选择${field.label}`} /></div>;
   if (field.type === "textarea") return <label className={className}><span>{field.label}</span><textarea value={value} onChange={(event) => setValue(event.target.value)} placeholder={field.placeholder} /></label>;
   return <label className={className}><span>{field.label}</span><input type={field.type || "text"} min={field.type === "number" ? "0" : undefined} value={value} onChange={(event) => setValue(event.target.value)} placeholder={field.placeholder} /></label>;
 }
 
 function AlmanacFormPreview({ date }) {
-  const info = lunarInfoForDate(date);
+  const info = lunarPreviewForDate(date);
   if (!info) return null;
   return <div className="almanac-form-preview span-two"><div><Sparkle size={20} weight="fill" /><span><strong>{info.lunarDate}</strong><small>{info.lunarYear} · {info.dayOfficer}</small></span></div><p><em>宜</em>{info.yi.slice(0, 6).join("、") || "无特别条目"}</p><p><em>忌</em>{info.ji.slice(0, 6).join("、") || "无特别条目"}</p><small>传统民俗参考；现实安全、天气、健康、法律和家人安排优先。</small></div>;
 }
 
 function QuickRecordModal({ open, onClose, onSave, initialRecord, defaultKind = "account", defaultDate = "", relatedProject = "" }) {
-  const createEmptyForm = (kind = defaultKind) => ({ ...FORM_DEFAULTS, kind, dueDate: defaultDate, project: relatedProject, status: defaultStatusForKind(kind), customFields: [] });
+  const isMobile = useIsMobile();
+  const swipe = useSwipeDownToClose(onClose);
+  const newCustomField = () => ({ id: `field-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, label: "", value: "" });
+  const createEmptyForm = (kind = defaultKind) => ({
+    ...FORM_DEFAULTS,
+    kind,
+    dueDate: defaultDate,
+    project: relatedProject,
+    status: defaultStatusForKind(kind),
+    customFields: kind === "custom" ? [newCustomField()] : [],
+  });
   const [form, setForm] = useState(createEmptyForm);
   useEffect(() => {
     if (!open) return;
@@ -934,15 +1085,18 @@ function QuickRecordModal({ open, onClose, onSave, initialRecord, defaultKind = 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, initialRecord?.id, defaultKind, defaultDate, relatedProject]);
   const config = RECORD_FORM_CONFIG[form.kind] || RECORD_FORM_CONFIG.account;
+  const primaryKeys = PRIMARY_FIELDS_BY_KIND[form.kind] || [];
+  const primaryFields = config.fields.filter((field) => primaryKeys.includes(field.key));
+  const extraFields = config.fields.filter((field) => !primaryKeys.includes(field.key));
   const changeKind = (kind) => setForm((current) => ({
     ...createEmptyForm(kind),
     title: current.title,
     dueDate: current.dueDate,
     dueTime: current.dueTime,
     project: current.project || relatedProject,
-    customFields: current.customFields,
+    customFields: kind === "custom" && !current.customFields.length ? [newCustomField()] : current.customFields,
   }));
-  const addCustomField = () => setForm((current) => ({ ...current, customFields: [...current.customFields, { id: `field-${Date.now()}`, label: "", value: "" }] }));
+  const addCustomField = () => setForm((current) => ({ ...current, customFields: [...current.customFields, newCustomField()] }));
   const updateCustomField = (id, key, value) => setForm((current) => ({ ...current, customFields: current.customFields.map((field) => field.id === id ? { ...field, [key]: value } : field) }));
   const removeCustomField = (id) => setForm((current) => ({ ...current, customFields: current.customFields.filter((field) => field.id !== id) }));
   const submit = (event) => {
@@ -961,16 +1115,23 @@ function QuickRecordModal({ open, onClose, onSave, initialRecord, defaultKind = 
     <AnimatePresence>
       {open ? (
         <motion.div className="modal-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
-          <motion.form className="record-modal glass-layer" initial={{ opacity: 0, y: 36, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 24, scale: 0.97 }} transition={{ type: "spring", stiffness: 280, damping: 26 }} onSubmit={submit}>
+          <motion.form className="record-modal glass-layer" initial={{ opacity: 0, y: 36, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 24, scale: 0.97 }} transition={{ type: "spring", stiffness: 280, damping: 26 }} onSubmit={submit} {...swipe}>
+            <span className="sheet-handle" />
             <div className="modal-head"><div><p className="eyebrow">所有内容都可以随时修改</p><h2>{initialRecord ? "编辑记录" : `新增${KIND_LABELS[form.kind] || "记录"}`}</h2></div><button type="button" className="icon-button" onClick={onClose}><X size={22} /></button></div>
             <div className="form-grid">
-              <label><span>记录类型</span><select value={form.kind} onChange={(event) => changeKind(event.target.value)}>{Object.entries(KIND_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
-              <label><span>{config.titleLabel}</span><input required value={form.title} onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))} placeholder={config.titlePlaceholder} autoFocus /></label>
+              <div className="record-type-section span-two"><span>先选择记录类型</span><div className="record-type-chips">{Object.entries(KIND_LABELS).filter(([value]) => value !== "almanac").map(([value, label]) => { const Icon = kindIcons[value] || Database; return <button type="button" className={form.kind === value ? "active" : ""} key={value} onClick={() => changeKind(value)}><Icon size={18} /><span>{label}</span></button>; })}</div></div>
+              <label className="span-two important-field"><span>{config.titleLabel}<em>必填</em></span><input required value={form.title} onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))} placeholder={config.titlePlaceholder} autoFocus={!isMobile} /></label>
               <div className="form-type-helper span-two"><Sparkle size={17} /><span><strong>{KIND_LABELS[form.kind]}</strong><small>{config.helper}</small></span></div>
-              {config.fields.map((field) => <RecordFormField key={`${form.kind}-${field.key}`} field={field} form={form} setForm={setForm} />)}
+              <div className="form-section-label span-two"><strong>{form.kind === "custom" ? "你的自定义内容" : "关键内容"}</strong><small>{form.kind === "custom" ? "名称和内容都可自由增删" : "按实际填写顺序排列"}</small></div>
+              {form.kind === "custom" ? <div className="custom-fields-section custom-fields-section--primary span-two">{form.customFields.map((field) => <div className="custom-field-row" key={field.id}><input value={field.label} onChange={(event) => updateCustomField(field.id, "label", event.target.value)} placeholder="选项名称，例如：联系人" /><input value={field.value} onChange={(event) => updateCustomField(field.id, "value", event.target.value)} placeholder="填写内容" /><button type="button" onClick={() => removeCustomField(field.id)} aria-label="删除自定义字段"><X size={17} /></button></div>)}
+                <button type="button" className="add-field-button" onClick={addCustomField}><Plus size={16} />再添加一个自定义选项</button>
+              </div> : null}
+              {primaryFields.map((field) => <RecordFormField key={`${form.kind}-${field.key}`} field={field} form={form} setForm={setForm} />)}
               {form.kind === "almanac" && form.dueDate ? <AlmanacFormPreview date={form.dueDate} /> : null}
-              {form.customFields.map((field) => <div className="custom-field-row span-two" key={field.id}><input value={field.label} onChange={(event) => updateCustomField(field.id, "label", event.target.value)} placeholder="自定义名称" /><input value={field.value} onChange={(event) => updateCustomField(field.id, "value", event.target.value)} placeholder="内容" /><button type="button" onClick={() => removeCustomField(field.id)} aria-label="删除自定义字段"><X size={17} /></button></div>)}
-              <button type="button" className="add-field-button span-two" onClick={addCustomField}><Plus size={16} />没有合适字段？增加自定义内容</button>
+              {extraFields.length ? <details className="more-form-fields span-two"><summary><span><Plus size={16} />更多可选信息</span><small>{extraFields.length} 项</small></summary><div className="form-grid">{extraFields.map((field) => <RecordFormField key={`${form.kind}-${field.key}`} field={field} form={form} setForm={setForm} />)}</div></details> : null}
+              {form.kind !== "custom" ? <div className="custom-fields-section span-two">{form.customFields.map((field) => <div className="custom-field-row" key={field.id}><input value={field.label} onChange={(event) => updateCustomField(field.id, "label", event.target.value)} placeholder="自定义名称" /><input value={field.value} onChange={(event) => updateCustomField(field.id, "value", event.target.value)} placeholder="内容" /><button type="button" onClick={() => removeCustomField(field.id)} aria-label="删除自定义字段"><X size={17} /></button></div>)}
+                <button type="button" className="add-field-button" onClick={addCustomField}><Plus size={16} />没有合适字段？增加自定义内容</button>
+              </div> : null}
             </div>
             <div className="modal-actions"><button type="button" className="secondary-button" onClick={onClose}>取消</button><LiquidButton type="submit" icon={initialRecord ? Check : Plus}>{initialRecord ? "保存修改" : "保存记录"}</LiquidButton></div>
           </motion.form>
@@ -1008,6 +1169,7 @@ function LockScreen({ config, biometric, onPasswordUnlock, onBiometricUnlock }) 
 
 export function App() {
   const reduceMotion = useReducedMotion();
+  const isMobile = useIsMobile();
   const shellRef = useRef(null);
   const initializedRef = useRef(false);
   const [records, setRecords] = useState([]);
@@ -1027,6 +1189,13 @@ export function App() {
   const [query, setQuery] = useState("");
   const [toast, setToast] = useState("");
   const [handledAnimation, setHandledAnimation] = useState(false);
+  const [mobileChromeHidden, setMobileChromeHidden] = useMobileChromeAutoHide(isMobile, quickOpen || drawerOpen || settingsOpen);
+
+  useEffect(() => {
+    if (!isMobile) return;
+    setMobileChromeHidden(false);
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, [activeKind, isMobile, setMobileChromeHidden]);
 
   useEffect(() => {
     let cancelled = false;
@@ -1099,7 +1268,7 @@ export function App() {
   };
 
   const handlePointerMove = (event) => {
-    if (reduceMotion || !shellRef.current) return;
+    if (reduceMotion || isMobile || !shellRef.current) return;
     const rect = shellRef.current.getBoundingClientRect();
     shellRef.current.style.setProperty("--cursor-x", `${event.clientX - rect.left}px`);
     shellRef.current.style.setProperty("--cursor-y", `${event.clientY - rect.top}px`);
@@ -1277,7 +1446,10 @@ export function App() {
     try {
       if (isTauri()) {
         const granted = await isPermissionGranted() || await requestPermission() === "granted";
-        if (!granted) return showToast("请在系统设置中允许小黄提醒管家发送通知");
+        if (!granted) {
+          await openNotificationSettings();
+          return showToast("已打开系统通知设置，请允许小黄提醒管家发送通知");
+        }
         const scheduled = await scheduleRenewalReminders(visibleRecords);
         await sendNotification({ title: "小黄提醒已开启", body: `已安排 ${scheduled} 条提醒，关键日期不会再错过。` });
         return showToast(`已开启系统通知并安排 ${scheduled} 条提醒`);
@@ -1285,34 +1457,40 @@ export function App() {
       if (!("Notification" in window)) return showToast("当前浏览器不支持系统通知");
       const permission = await Notification.requestPermission();
       if (permission === "granted") {
-        new Notification("小黄提醒已开启", { body: "到期、待办与等待结果会在这里提醒你。", icon: "/assets/app-icon.png" });
+        new Notification("小黄提醒已开启", { body: "到期、待办与等待结果会在这里提醒你。", icon: "/assets/app-icon-flat.png" });
         showToast("通知提醒已开启");
       } else showToast("你可以稍后在浏览器设置中开启通知");
     } catch {
-      showToast("提醒设置失败，请检查系统通知权限");
+      if (isTauri()) {
+        try {
+          await openNotificationSettings();
+          return showToast("提醒未能开启，已为你打开系统通知设置");
+        } catch {
+          return showToast("无法打开通知设置，请在系统设置中选择小黄提醒管家");
+        }
+      }
+      showToast("提醒设置失败，请检查浏览器通知权限");
     }
   };
 
-  if (bootState === "loading") return <div className="lock-screen"><div className="background-image" /><div className="boot-mark"><img src="/assets/app-icon.png" alt="小黄提醒管家" /><span>正在打开本地资料…</span></div></div>;
+  if (bootState === "loading") return <div className="lock-screen"><div className="background-image" /><div className="boot-mark"><img src="/assets/app-icon-flat.png?v=052" alt="小黄提醒管家" /><span>正在打开本地资料…</span></div></div>;
   if (bootState === "locked") return <LockScreen config={lockConfig} biometric={biometric} onPasswordUnlock={unlockWithPassword} onBiometricUnlock={unlockWithBiometric} />;
 
   return (
-    <div ref={shellRef} className={`app-shell ${drawerOpen && selected ? "drawer-visible" : ""}`} onPointerMove={handlePointerMove}>
+    <div ref={shellRef} className={`app-shell ${drawerOpen && selected ? "drawer-visible" : ""} ${mobileChromeHidden ? "mobile-chrome-hidden" : ""}`} onPointerMove={handlePointerMove}>
       <div className="background-image" />
       <div className="cursor-aura" />
       <Sidebar activeKind={activeKind} onNavigate={setActiveKind} onQuickAdd={() => openCreate()} onSettings={() => setSettingsOpen(true)} />
       <main className="main-content">
-        <Topbar query={query} setQuery={setQuery} onQuickAdd={() => openCreate()} onNotifications={requestNotifications} onSettings={() => setSettingsOpen(true)} lockEnabled={Boolean(lockConfig)} cloudEnabled={cloudEnabled} notificationCount={notificationCount} />
+        <Topbar query={query} setQuery={setQuery} onQuickAdd={() => openCreate()} onNotifications={requestNotifications} lockEnabled={Boolean(lockConfig)} cloudEnabled={cloudEnabled} notificationCount={notificationCount} />
         <AnimatePresence mode="wait">
           {activeKind === "overview" ? (
             <motion.div className="overview" key="overview" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              {!visibleRecords.length ? <WelcomePanel onAdd={openCreate} /> : null}
               <CinematicCalendar records={visibleRecords} onOpen={openDetail} onAdd={openCreate} onViewAlmanac={openAlmanac} />
-              <OverviewPortals records={visibleRecords} onNavigate={setActiveKind} />
-              <HeroRenewal record={filteredRenewals[0] || renewals[0]} onOpen={openDetail} onHandled={markHandled} />
-              <RenewalTable records={filteredRenewals} selectedId={selected?.id} onSelect={openDetail} onViewAll={() => setActiveKind("renewal")} />
-              <PendingTable records={filteredPending} onSelect={openDetail} onViewAll={() => setActiveKind("pending")} />
+              <UpcomingTasks records={visibleRecords} onOpen={openDetail} onViewAll={() => setActiveKind("pending")} onAdd={openCreate} />
             </motion.div>
+          ) : activeKind === "hub" ? (
+            <OverviewHub key="hub" records={visibleRecords} onNavigate={setActiveKind} />
           ) : activeKind === "almanac" ? (
             <AlmanacView key="almanac" date={almanacDate} onDateChange={setAlmanacDate} records={visibleRecords} onOpen={openDetail} onAdd={openCreate} />
           ) : (
@@ -1322,7 +1500,7 @@ export function App() {
         <footer><ShieldCheck size={17} />本地优先 · {lockConfig ? "保险箱已加密" : "未开启本地密码"} · {cloudEnabled ? "iCloud 密文同步已开启" : "无服务器账户"}</footer>
       </main>
       <AnimatePresence>{drawerOpen && selected ? <DetailDrawer record={selected} onClose={() => setDrawerOpen(false)} onHandled={markHandled} onDelete={deleteRecord} onEdit={openEdit} onAddRelated={addRelated} handledAnimation={handledAnimation} /> : null}</AnimatePresence>
-      <MobileNav activeKind={activeKind} onNavigate={setActiveKind} />
+      <MobileNav activeKind={activeKind} onNavigate={setActiveKind} onAdd={() => openCreate("pending")} onSettings={() => setSettingsOpen(true)} settingsOpen={settingsOpen} />
       <QuickRecordModal open={quickOpen} onClose={() => { setQuickOpen(false); setEditingRecord(null); }} onSave={saveRecord} initialRecord={editingRecord} defaultKind={createContext.kind} defaultDate={createContext.date} relatedProject={createContext.project} />
       <SecurityCenter
         open={settingsOpen}

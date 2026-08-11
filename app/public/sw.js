@@ -1,5 +1,5 @@
-const CACHE = "xiaohuang-reminder-shell-v1";
-const ASSETS = ["/", "/manifest.webmanifest", "/assets/app-icon.png", "/assets/spectral-liquid-background.png"];
+const CACHE = "xiaohuang-reminder-shell-v3";
+const ASSETS = ["/", "/manifest.webmanifest", "/assets/app-icon-flat.png?v=052"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(ASSETS)));

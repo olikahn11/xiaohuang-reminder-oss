@@ -2,7 +2,8 @@ app/node_modules/
 app/dist/
 app/.vite/
 app/.playwright-cli/
-app/output/playwright/
+app/output/
+app/design-archive/
 app/src-tauri/target/
 app/src-tauri/gen/schemas/
 app/src-tauri/gen/apple/build*/

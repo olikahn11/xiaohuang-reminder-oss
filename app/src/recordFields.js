@@ -33,6 +33,17 @@ const reminders = { key: "reminders", label: "提醒设置", wide: true, placeho
 const notes = (placeholder) => ({ key: "notes", label: "备注", type: "textarea", wide: true, placeholder });
 
 export const RECORD_FORM_CONFIG = {
+  custom: {
+    titleLabel: "记录名称",
+    titlePlaceholder: "例如：我要记住的事",
+    helper: "不套用固定模板，下方的名称和内容都由你自己添加。",
+    fields: [
+      ...dateTime("需要提醒的日期", "提醒时间"),
+      status([["active", "进行中"], ["pending", "待处理"], ["handled", "已完成"], ["archived", "已归档"]], "active"),
+      reminders,
+      notes("补充说明……"),
+    ],
+  },
   project: {
     titleLabel: "项目名称",
     titlePlaceholder: "例如：小黄天气 App",
@@ -161,6 +172,18 @@ export const RECORD_FORM_CONFIG = {
       notes("家中习俗、仪式安排或需要确认的细节……"),
     ],
   },
+};
+
+export const PRIMARY_FIELDS_BY_KIND = {
+  custom: [],
+  project: ["subtitle", "identity", "status", "dueDate", "dueTime"],
+  account: ["account", "password", "email", "phone", "status"],
+  renewal: ["dueDate", "dueTime", "amount", "cycle", "payment", "status"],
+  server: ["identity", "account", "status", "dueDate", "dueTime"],
+  developer: ["identity", "account", "dueDate", "dueTime", "status"],
+  publish: ["subtitle", "project", "dueDate", "dueTime", "status"],
+  pending: ["subtitle", "identity", "dueDate", "dueTime", "status"],
+  almanac: ["traditionMatter", "dueDate", "dueTime", "location", "status"],
 };
 
 export function defaultStatusForKind(kind) {

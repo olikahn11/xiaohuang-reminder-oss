@@ -9,6 +9,13 @@
     "core:default",
     "notification:default",
     "opener:default",
+    {
+      "identifier": "opener:allow-open-url",
+      "allow": [
+        { "url": "app-settings:*" },
+        { "url": "x-apple.systempreferences:*" }
+      ]
+    },
     "biometric:default",
     "dialog:default",
     "fs:default",
