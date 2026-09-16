@@ -26,17 +26,23 @@ struct MacReminder {
 fn schedule_macos_reminders(reminders: Vec<MacReminder>) -> Result<usize, String> {
   use objc2_foundation::{NSDateComponents, NSString};
   use objc2_user_notifications::{
-    UNCalendarNotificationTrigger, UNMutableNotificationContent, UNNotificationRequest,
-    UNUserNotificationCenter,
+    UNAuthorizationOptions, UNCalendarNotificationTrigger, UNMutableNotificationContent,
+    UNNotificationRequest, UNNotificationSound, UNUserNotificationCenter,
   };
 
   let center = UNUserNotificationCenter::currentNotificationCenter();
+  
+  let options = UNAuthorizationOptions::Alert | UNAuthorizationOptions::Sound | UNAuthorizationOptions::Badge;
+  let block = block2::RcBlock::new(|_granted: objc2::runtime::Bool, _error: *mut objc2_foundation::NSError| {});
+  center.requestAuthorizationWithOptions_completionHandler(options, &block);
+
   center.removeAllPendingNotificationRequests();
 
   for reminder in &reminders {
     let content = UNMutableNotificationContent::new();
     content.setTitle(&NSString::from_str(&reminder.title));
     content.setBody(&NSString::from_str(&reminder.body));
+    content.setSound(Some(&UNNotificationSound::defaultSound()));
 
     let components = NSDateComponents::new();
     components.setYear(reminder.year);

@@ -80,7 +80,7 @@ export const RECORD_FORM_CONFIG = {
     fields: [
       ...dateTime("续费 / 到期日期", "扣款时间"),
       { key: "amount", label: "费用（元）", type: "number", placeholder: "128" },
-      { key: "cycle", label: "计费周期", type: "select", options: [["", "不设置"], ["每月", "每月"], ["每季度", "每季度"], ["每年", "每年"], ["一次性", "一次性"]] },
+      { key: "cycle", label: "计费周期", type: "select", options: [["", "不设置"], ["每月", "每月"], ["每两个月", "每两个月"], ["每季度", "每季度"], ["每半年", "每半年"], ["每年", "每年"], ["一次性", "一次性"]] },
       { key: "payment", label: "付款方式", placeholder: "银行卡、App Store、支付宝……" },
       status([["normal", "正常"], ["due", "即将到期"], ["handled", "已续费"], ["cancelled", "已取消"]], "normal"),
       { key: "account", label: "订阅账号", placeholder: "账号或遮挡后的邮箱" },
@@ -101,7 +101,7 @@ export const RECORD_FORM_CONFIG = {
       status([["active", "运行中"], ["maintenance", "维护中"], ["due", "即将到期"], ["stopped", "已停用"]], "active"),
       ...dateTime("到期日期", "提醒时间"),
       { key: "amount", label: "费用（元）", type: "number", placeholder: "可选" },
-      { key: "cycle", label: "计费周期", type: "select", options: [["", "不设置"], ["每月", "每月"], ["每季度", "每季度"], ["每年", "每年"]] },
+      { key: "cycle", label: "计费周期", type: "select", options: [["", "不设置"], ["每月", "每月"], ["每两个月", "每两个月"], ["每季度", "每季度"], ["每半年", "每半年"], ["每年", "每年"]] },
       { key: "project", label: "承载项目", wide: true, placeholder: "服务器承载哪些项目" },
       reminders,
       { key: "url", label: "控制台地址", type: "url", wide: true, placeholder: "https://" },

@@ -77,6 +77,7 @@ export function normalizeRecords(records, now = new Date().toISOString()) {
     createdAt: record.createdAt || record.updatedAt || now,
     updatedAt: record.updatedAt || record.createdAt || now,
     deletedAt: record.deletedAt || null,
+    history: Array.isArray(record.history) ? record.history : [],
   }));
 }
 
