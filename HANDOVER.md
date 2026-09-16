@@ -31,10 +31,14 @@
    - **日历页面彻底重构 (`CinematicCalendar.jsx`)**：手机端上部紧凑月历视窗完整收纳在屏幕上半屏（~220px，单元格 38px 居中排布阳历/农历），彻底告别方格过大与横向溢出；废除拥挤文本胶囊，改用精致的双色波普打点指示器；下半屏展开「当日日程票据流」，支持在日历中一键完成续费并推期。
    - **续费与资产页面重构 (`RecordList.jsx`)**：手机端废除 6 列 Table，重构为双端响应式「波普 Bento 票据卡片流」，包含分类图标徽章、周期药丸、逾期/临近倒计时标签及大字金额；资产分类设计为横向顺滑滚动胶囊分类器 (`asset-pills-scroll-container`)。
    - **首页空间与留白收敛 (`DashboardView.jsx` & `theme.css`)**：收紧容器间距与消除虚空留白，全屏宽度与边框自适应，布局饱满自然。
+7. **全局文字高对比度彻底治理与全机型底栏紧凑下移自适应**：
+   - **清除旧样式与文字对比度 18:1 墨黑重塑**：彻底移除遗留的 `styles.css` 和 `glass-theme.css`，杜绝淡青/半透明浅色文字泄漏；全 App 文字颜色重设为纯墨黑 `#18181B` 与深炭黑 `#27272A`；黄历速览与详情中，宜/忌与条目文字（“开市、交易...”、“待娶、破土...”）采用粗墨黑 `.yiji-text`，清晰醒目。
+   - **底栏菜单解耦与向下紧凑贴底**：将 `<BottomNav>` 从滚动视图移至根外层，高度紧凑为 `calc(46px + env(safe-area-inset-bottom, 8px))`，菜单行适度向下贴近 Home Bar 指示条，彻底消除下方大片无意义空白。
+   - **全机型 Safe Area 动态紧凑贴合**：顶部顶栏与各主内容容器底部边距根据机型安全区自适应，小屏、标准屏、Pro Max 均能获得最合身的留白与最佳视口空间。
 
 ## 3. 核心交付物文件
 - **macOS 安装包**：`deliverables/小黄提醒管家-0.6.1-macOS-AppleSilicon.dmg` (5.2MB)
-- **iPhone 安装包**：`deliverables/小黄提醒管家-0.6.1-iPhone-Unsigned.ipa` (4.2MB)
+- **iPhone 安装包**：`deliverables/小黄提醒管家-0.6.1-iPhone-Unsigned.ipa` (4.18MB)
 - **移动端全景 UI 验证截图**：
   - 首页看板：`ui_mobile_dashboard.png`
   - 时间轨道日历：`ui_mobile_calendar.png`

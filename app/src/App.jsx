@@ -389,15 +389,15 @@ export function App() {
             />
           )}
         </main>
-
-        {/* 移动端底栏 */}
-        <BottomNav
-          activeNav={activeNav}
-          onNavigate={(key) => setActiveNav(key)}
-          onQuickAdd={() => handleOpenCreate("renewal")}
-          urgentCount={urgentSummary.totalUrgentCount}
-        />
       </div>
+
+      {/* 移动端底栏：独立于滚动视口，稳固贴底并无缝适配各机型安全区 */}
+      <BottomNav
+        activeNav={activeNav}
+        onNavigate={(key) => setActiveNav(key)}
+        onQuickAdd={() => handleOpenCreate("renewal")}
+        urgentCount={urgentSummary.totalUrgentCount}
+      />
 
       {/* 详情抽屉 */}
       {selectedRecord && (

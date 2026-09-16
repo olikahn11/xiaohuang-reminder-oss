@@ -121,7 +121,7 @@ export function CinematicCalendar({
               {currentYear} 年 {currentMonth} 月
             </h2>
             <span className="calendar-month-badge">
-              本月 {totalMonthCount} 项日程（周期自动展开）
+              本月 {totalMonthCount} 项日程<span className="badge-hint">（周期已展开）</span>
             </span>
           </div>
 
@@ -241,18 +241,24 @@ export function CinematicCalendar({
             title="点击查看当日完整择吉黄历"
           >
             <div className="almanac-quick-card__head">
-              <Sparkle size={16} weight="fill" className="text-accent" />
-              <span>黄历择吉速览</span>
-              <CaretRight size={14} />
+              <div className="almanac-quick-title">
+                <Sparkle size={16} weight="fill" className="text-accent" />
+                <span>黄历择吉速览</span>
+              </div>
+              <CaretRight size={14} weight="bold" />
             </div>
             <div className="almanac-quick-yiji">
               <div className="yiji-line">
                 <span className="tag-yi">宜</span>
-                <span>{selectedAlmanac.yi.slice(0, 4).join("、") || "诸事皆宜"}</span>
+                <span className="yiji-text">
+                  {selectedAlmanac.yi.slice(0, 4).join("、") || "诸事皆宜"}
+                </span>
               </div>
               <div className="yiji-line">
                 <span className="tag-ji">忌</span>
-                <span>{selectedAlmanac.ji.slice(0, 4).join("、") || "诸事不忌"}</span>
+                <span className="yiji-text">
+                  {selectedAlmanac.ji.slice(0, 4).join("、") || "诸事不忌"}
+                </span>
               </div>
             </div>
           </div>
