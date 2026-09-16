@@ -35,24 +35,24 @@
    - **清除旧样式与文字对比度 18:1 墨黑重塑**：彻底移除遗留的 `styles.css` 和 `glass-theme.css`，杜绝淡青/半透明浅色文字泄漏；全 App 文字颜色重设为纯墨黑 `#18181B` 与深炭黑 `#27272A`；黄历速览与详情中，宜/忌与条目文字（“开市、交易...”、“待娶、破土...”）采用粗墨黑 `.yiji-text`，清晰醒目。
    - **底栏菜单解耦与向下紧凑贴底**：将 `<BottomNav>` 从滚动视图移至根外层，高度紧凑为 `calc(46px + env(safe-area-inset-bottom, 8px))`，菜单行适度向下贴近 Home Bar 指示条，彻底消除下方大片无意义空白。
    - **全机型 Safe Area 动态紧凑贴合**：顶部顶栏与各主内容容器底部边距根据机型安全区自适应，小屏、标准屏、Pro Max 均能获得最合身的留白与最佳视口空间。
+8. **数据彻底脱敏与多国语言 (i18n) 国际化系统**：
+   - **100% 零用户数据与隐私安全**：全面排查代码库与本地存储，`INITIAL_RECORDS` 初始默认纯空 `[]`，全库无任何用户隐私与个人数据残留，构建产物即装即用。
+   - **内置 5 国语言即时切换**：新增 `app/src/utils/i18n.js` 模块，支持简体中文 (zh-CN)、繁體中文 (zh-TW)、English (en-US)、日本語 (ja-JP)、Español (es-ES)；
+   - **系统设置全新重构**：设置中心增加「语言设置 (Languages)」独立卡片面板，国旗徽标 + 原语种展示，单选即时生效并全局持久化；顶栏新增设置快捷入口，移动端与桌面端随时可唤出。
 
 ## 3. 核心交付物文件
-- **macOS 安装包**：`deliverables/小黄提醒管家-0.6.1-macOS-AppleSilicon.dmg` (5.2MB)
-- **iPhone 安装包**：`deliverables/小黄提醒管家-0.6.1-iPhone-Unsigned.ipa` (4.18MB)
-- **移动端全景 UI 验证截图**：
-  - 首页看板：`ui_mobile_dashboard.png`
-  - 时间轨道日历：`ui_mobile_calendar.png`
-  - 订阅续费卡片流：`ui_mobile_renewal.png`
-  - 数字资产与横滑胶囊：`ui_mobile_assets.png`
+- **macOS 安装包**：`deliverables/小黄提醒管家-0.6.1-macOS-AppleSilicon.dmg` (5.57MB, 最新多语言+高对比度构建)
+- **iPhone 安装包**：`deliverables/小黄提醒管家-0.6.1-iPhone-Unsigned.ipa` (4.20MB, 最新真机免签+多语言构建)
 
 ## 4. 自动化验证结果
 - `node --test app/tests/cycle.test.mjs`：6/6 全部通过。
 - `node --test app/tests/reminder.test.mjs`：3/3 全部通过。
 - `npm run test:calendar`：4/4 全部通过。
 - `npm run test:security`：4/4 全部通过。
-- `cargo check`：编译成功。
-- `npm run build`：构建成功。
+- `npm run test:sites`：4/4 全部通过。
+- `npm run build`：生产构建通过。
+- 双端本地打包：DMG / IPA 生成完成。
 
-## 5. 待办与后续建议
-- 持续根据用户真实使用反馈微调特定业务字段（如农历自选或多账号凭据加密备份）。
-
+## 5. 待执行操作（待用户确认推送与发布）
+- 代码推送到 Private 仓库 (`origin: https://github.com/olikahn11/xiaohuang-reminder-private.git`)。
+- 软件安装包与新版本说明发布至 OSS 公开仓库 (`oss: https://github.com/olikahn11/xiaohuang-reminder-oss.git`)。

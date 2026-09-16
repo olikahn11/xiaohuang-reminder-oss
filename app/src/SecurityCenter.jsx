@@ -14,6 +14,7 @@ import {
   EnvelopeSimple,
   Fingerprint,
   FolderOpen,
+  Globe,
   Key,
   LockKey,
   PaperPlaneTilt,
@@ -37,6 +38,12 @@ import {
   startNearbyTransfer,
 } from "./native.js";
 import { useSwipeDownToClose } from "./ThemedSelect.jsx";
+import {
+  SUPPORTED_LANGUAGES,
+  getStoredLanguage,
+  setStoredLanguage,
+  t,
+} from "./utils/i18n.js";
 
 const QR_FORMAT = "xuji-nearby-link";
 
@@ -66,9 +73,11 @@ export function SecurityCenter({
   onCloudUpload,
   onCloudDownload,
   notify,
+  currentLang = "zh-CN",
+  onSelectLanguage,
 }) {
   const swipe = useSwipeDownToClose(onClose);
-  const [tab, setTab] = useState("security");
+  const [tab, setTab] = useState("language");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [backupPassword, setBackupPassword] = useState("");
@@ -147,10 +156,11 @@ export function SecurityCenter({
   });
 
   const tabs = [
-    ["security", ShieldCheck, "本地安全"],
-    ["nearby", QrCode, "设备互传"],
-    ["backup", FolderOpen, "加密备份"],
-    ["icloud", CloudArrowUp, "iCloud"],
+    ["language", Globe, t("settings.tab_language", currentLang)],
+    ["security", ShieldCheck, t("settings.tab_security", currentLang)],
+    ["nearby", QrCode, t("settings.tab_nearby", currentLang)],
+    ["backup", FolderOpen, t("settings.tab_backup", currentLang)],
+    ["icloud", CloudArrowUp, t("settings.tab_icloud", currentLang)],
   ];
 
   return (
@@ -159,10 +169,44 @@ export function SecurityCenter({
         <motion.div className="modal-backdrop security-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
           <motion.section className="settings-panel security-center glass-layer" initial={{ x: "105%", opacity: 0.7 }} animate={{ x: 0, opacity: 1 }} exit={{ x: "105%", opacity: 0.7 }} transition={{ type: "spring", stiffness: 300, damping: 32 }} {...swipe}>
             <span className="sheet-handle" />
-            <div className="modal-head security-head"><div><p className="eyebrow">零服务器 · 本地优先</p><h2>安全与传输中心</h2></div><button className="icon-button" onClick={onClose}><X size={22} /></button></div>
+            <div className="modal-head security-head"><div><p className="eyebrow">{t("settings.subtitle", currentLang)}</p><h2>{t("settings.title", currentLang)}</h2></div><button className="icon-button" onClick={onClose}><X size={22} /></button></div>
             <nav className="security-tabs">{tabs.map(([value, Icon, label]) => <button key={value} className={tab === value ? "active" : ""} onClick={() => setTab(value)}><Icon size={19} /><span>{label}</span></button>)}</nav>
 
             <div className="security-scroll">
+              {tab === "language" ? <div className="security-page">
+                <div className="section-copy"><h3>{t("settings.language_title", currentLang)}</h3><p>{t("settings.language_desc", currentLang)}</p></div>
+                <div className="language-grid">
+                  {SUPPORTED_LANGUAGES.map((lang) => {
+                    const isSelected = (currentLang || getStoredLanguage()) === lang.code;
+                    return (
+                      <motion.div
+                        key={lang.code}
+                        whileHover={{ y: -2, scale: 1.01 }}
+                        whileTap={{ scale: 0.98 }}
+                        className={`language-card ${isSelected ? "active" : ""}`}
+                        onClick={() => {
+                          setStoredLanguage(lang.code);
+                          onSelectLanguage?.(lang.code);
+                          notify?.(`${lang.flag} ${lang.nativeName} (${lang.label})`);
+                        }}
+                      >
+                        <div className="language-card__left">
+                          <span className="language-flag">{lang.flag}</span>
+                          <div className="language-card__info">
+                            <strong>{lang.nativeName}</strong>
+                            <small>{lang.label !== lang.nativeName ? `${lang.label} · ${lang.code}` : lang.code}</small>
+                          </div>
+                        </div>
+                        {isSelected ? <span className="language-check"><Check size={20} weight="bold" /></span> : null}
+                      </motion.div>
+                    );
+                  })}
+                </div>
+                <div className="local-facts" style={{ marginTop: 20 }}>
+                  <div><Check size={17} /><span><strong>{t("settings.privacy_title", currentLang)}</strong><small>{t("settings.privacy_desc", currentLang)}</small></span></div>
+                  <div><Check size={17} /><span><strong>{t("settings.version", currentLang)}</strong><small>macOS AppleSilicon &amp; iOS 16+ · 纯本地通用公开版</small></span></div>
+                </div>
+              </div> : null}
               {tab === "security" ? <div className="security-page">
                 <div className="security-hero"><span className="security-orbit"><LockKey size={30} weight="duotone" /></span><div><strong>{lockConfig ? "本地保险箱已开启" : "当前使用普通本地保存"}</strong><small>{lockConfig ? "资料已使用 AES‑256‑GCM 加密" : "你可以继续不设置任何密码"}</small></div><span className={`mini-status ${lockConfig ? "active" : ""}`}>{lockConfig ? "已保护" : "可选"}</span></div>
                 {!lockConfig ? <form className="security-form" onSubmit={(event) => { event.preventDefault(); run(async () => { if (password !== confirmPassword) throw new Error("两次输入的密码不一致"); await onEnableLock(password); setPassword(""); setConfirmPassword(""); notify("本地保险箱已开启"); }); }}>

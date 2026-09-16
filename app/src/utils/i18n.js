@@ -1,0 +1,505 @@
+/**
+ * 小黄提醒管家 · 多国语言国际化系统 (i18n)
+ * 支持：简体中文、繁體中文、English、日本語、Español
+ */
+
+export const SUPPORTED_LANGUAGES = [
+  { code: "zh-CN", label: "简体中文", nativeName: "简体中文", flag: "🇨🇳" },
+  { code: "zh-TW", label: "繁體中文", nativeName: "繁體中文", flag: "🇭🇰" },
+  { code: "en-US", label: "English", nativeName: "English", flag: "🇺🇸" },
+  { code: "ja-JP", label: "日本語", nativeName: "日本語", flag: "🇯🇵" },
+  { code: "es-ES", label: "Español", nativeName: "Español", flag: "🇪🇸" },
+];
+
+export const TRANSLATIONS = {
+  "zh-CN": {
+    // 导航
+    "nav.dashboard": "全景看板",
+    "nav.calendar": "时间轨道",
+    "nav.renewal": "订阅续费",
+    "nav.pending": "待办事项",
+    "nav.assets": "数字资产",
+    "nav.almanac": "择吉黄历",
+    "nav.security": "系统设置",
+    "nav.dashboard_short": "看板",
+    "nav.calendar_short": "日历",
+    "nav.renewal_short": "续费",
+    "nav.assets_short": "资产",
+
+    // 顶栏与通用动作
+    "app.title": "小黄提醒管家",
+    "app.subtitle": "个人数字资产与订阅守护者",
+    "btn.new_item": "新增事项",
+    "btn.quick_add": "快速新增",
+    "btn.save": "保存记录",
+    "btn.cancel": "取消",
+    "btn.delete": "删除",
+    "btn.edit": "编辑",
+    "btn.close": "关闭",
+    "btn.search": "搜索事项...",
+    "btn.today": "今天",
+    "btn.prev_month": "上一月",
+    "btn.next_month": "下一月",
+    "btn.renew_cycle": "完成本期续费",
+    "btn.renew_short": "续费推期",
+    "btn.view_details": "查看详情",
+    "btn.unlock": "验证指纹/面容解锁",
+
+    // 看板统计
+    "stat.monthly_spend": "本月续费支出",
+    "stat.active_subs": "在保活跃订阅",
+    "stat.pending_tasks": "待处理待办",
+    "stat.security_status": "本地保险箱",
+    "stat.security_active": "加密防护中",
+    "stat.security_idle": "标准安全模式",
+    "stat.unit_currency": "¥",
+    "stat.unit_items": "项",
+    "stat.unit_subs": "个服务",
+
+    // 紧急横幅与日程
+    "urgent.title": "紧急日程提醒",
+    "urgent.overdue": "已逾期",
+    "urgent.due_today": "今日到期",
+    "urgent.due_soon": "即将到期",
+    "urgent.normal": "正常进行中",
+    "agenda.upcoming_title": "近期重要日程",
+    "agenda.empty": "近期暂无排期日程",
+    "agenda.day_empty": "这一天暂无排期事项",
+    "agenda.selected_date": "已选日期",
+    "agenda.count_badge": "本月 {n} 项日程",
+
+    // 黄历
+    "almanac.quick_title": "黄历择吉速览",
+    "almanac.yi": "宜",
+    "almanac.ji": "忌",
+    "almanac.yi_default": "诸事皆宜",
+    "almanac.ji_default": "诸事不忌",
+    "almanac.view_full": "查看完整择吉黄历",
+    "almanac.disclaimer": "黄历宜忌仅供中国传统民间民俗文化参考与生活调适，重要决策请以现实为准。",
+
+    // 周期
+    "cycle.monthly": "每月",
+    "cycle.bimonthly": "每两月",
+    "cycle.quarterly": "每季度",
+    "cycle.semiannually": "每半年",
+    "cycle.annually": "每年",
+    "cycle.once": "一次性",
+
+    // 分类
+    "category.all": "全部资产",
+    "category.project": "项目工程",
+    "category.account": "账号绑定",
+    "category.server": "服务器资源",
+    "category.developer": "资质证照",
+    "category.publish": "发布记录",
+    "category.custom": "自定义资产",
+
+    // 设置与语言
+    "settings.title": "系统设置与安全中心",
+    "settings.subtitle": "零服务器 · 本地优先 · 隐私沙盒",
+    "settings.tab_language": "语言设置",
+    "settings.tab_security": "本地安全",
+    "settings.tab_nearby": "设备互传",
+    "settings.tab_backup": "加密备份",
+    "settings.tab_icloud": "iCloud",
+    "settings.language_title": "多国语言 (Language)",
+    "settings.language_desc": "选择您偏好的界面显示语言，全系统实时生效",
+    "settings.privacy_title": "离线隐私保护",
+    "settings.privacy_desc": "本软件所有记录 100% 仅保存在本地设备沙盒中，零云端上传，零隐私泄露",
+    "settings.version": "当前版本：0.6.1",
+  },
+
+  "zh-TW": {
+    "nav.dashboard": "全景看板",
+    "nav.calendar": "時間軌道",
+    "nav.renewal": "訂閱續費",
+    "nav.pending": "待辦事項",
+    "nav.assets": "數位資產",
+    "nav.almanac": "擇吉黃曆",
+    "nav.security": "系統設定",
+    "nav.dashboard_short": "看板",
+    "nav.calendar_short": "日曆",
+    "nav.renewal_short": "續費",
+    "nav.assets_short": "資產",
+
+    "app.title": "小黃提醒管家",
+    "app.subtitle": "個人數位資產與訂閱守護者",
+    "btn.new_item": "新增事項",
+    "btn.quick_add": "快速新增",
+    "btn.save": "儲存記錄",
+    "btn.cancel": "取消",
+    "btn.delete": "刪除",
+    "btn.edit": "編輯",
+    "btn.close": "關閉",
+    "btn.search": "搜尋事項...",
+    "btn.today": "今天",
+    "btn.prev_month": "上一月",
+    "btn.next_month": "下一月",
+    "btn.renew_cycle": "完成本期續費",
+    "btn.renew_short": "續費推期",
+    "btn.view_details": "查看詳情",
+    "btn.unlock": "驗證指紋/臉部解鎖",
+
+    "stat.monthly_spend": "本月續費支出",
+    "stat.active_subs": "在保活躍訂閱",
+    "stat.pending_tasks": "待處理待辦",
+    "stat.security_status": "本地保險箱",
+    "stat.security_active": "加密防護中",
+    "stat.security_idle": "標準安全模式",
+    "stat.unit_currency": "¥",
+    "stat.unit_items": "項",
+    "stat.unit_subs": "個服務",
+
+    "urgent.title": "緊急日程提醒",
+    "urgent.overdue": "已逾期",
+    "urgent.due_today": "今日到期",
+    "urgent.due_soon": "即將到期",
+    "urgent.normal": "正常進行中",
+    "agenda.upcoming_title": "近期重要日程",
+    "agenda.empty": "近期暫無排期日程",
+    "agenda.day_empty": "這一天暫無排期事項",
+    "agenda.selected_date": "已選日期",
+    "agenda.count_badge": "本月 {n} 項日程",
+
+    "almanac.quick_title": "黃曆擇吉速覽",
+    "almanac.yi": "宜",
+    "almanac.ji": "忌",
+    "almanac.yi_default": "諸事皆宜",
+    "almanac.ji_default": "諸事不忌",
+    "almanac.view_full": "查看完整擇吉黃曆",
+    "almanac.disclaimer": "黃曆宜忌僅供中國傳統民間民俗文化參考與生活調適，重要決策請以現實為準。",
+
+    "cycle.monthly": "每月",
+    "cycle.bimonthly": "每兩月",
+    "cycle.quarterly": "每季度",
+    "cycle.semiannually": "每半年",
+    "cycle.annually": "每年",
+    "cycle.once": "一次性",
+
+    "category.all": "全部資產",
+    "category.project": "專案工程",
+    "category.account": "帳號綁定",
+    "category.server": "伺服器資源",
+    "category.developer": "資質證照",
+    "category.publish": "發布記錄",
+    "category.custom": "自訂資產",
+
+    "settings.title": "系統設定與安全中心",
+    "settings.subtitle": "零伺服器 · 本地優先 · 隱私沙盒",
+    "settings.tab_language": "語言設定",
+    "settings.tab_security": "本地安全",
+    "settings.tab_nearby": "設備互傳",
+    "settings.tab_backup": "加密備份",
+    "settings.tab_icloud": "iCloud",
+    "settings.language_title": "多國語言 (Language)",
+    "settings.language_desc": "選擇您偏好的界面顯示語言，全系統即時生效",
+    "settings.privacy_title": "離線隱私保護",
+    "settings.privacy_desc": "本軟體所有記錄 100% 僅儲存在本地設備沙盒中，零雲端上傳，零隱私洩露",
+    "settings.version": "目前版本：0.6.1",
+  },
+
+  "en-US": {
+    "nav.dashboard": "Dashboard",
+    "nav.calendar": "Time Track",
+    "nav.renewal": "Subscriptions",
+    "nav.pending": "Tasks & Todos",
+    "nav.assets": "Digital Assets",
+    "nav.almanac": "Lunar Almanac",
+    "nav.security": "Settings",
+    "nav.dashboard_short": "Board",
+    "nav.calendar_short": "Calendar",
+    "nav.renewal_short": "Renew",
+    "nav.assets_short": "Assets",
+
+    "app.title": "Xiao Huang Reminder",
+    "app.subtitle": "Personal Digital Asset & Subscription Keeper",
+    "btn.new_item": "New Item",
+    "btn.quick_add": "Quick Add",
+    "btn.save": "Save Record",
+    "btn.cancel": "Cancel",
+    "btn.delete": "Delete",
+    "btn.edit": "Edit",
+    "btn.close": "Close",
+    "btn.search": "Search items...",
+    "btn.today": "Today",
+    "btn.prev_month": "Prev",
+    "btn.next_month": "Next",
+    "btn.renew_cycle": "Complete Renewal",
+    "btn.renew_short": "Advance Cycle",
+    "btn.view_details": "Details",
+    "btn.unlock": "Unlock with Biometrics",
+
+    "stat.monthly_spend": "Monthly Cost",
+    "stat.active_subs": "Active Subs",
+    "stat.pending_tasks": "Pending Tasks",
+    "stat.security_status": "Local Vault",
+    "stat.security_active": "Hardware Encrypted",
+    "stat.security_idle": "Standard Security",
+    "stat.unit_currency": "$",
+    "stat.unit_items": "items",
+    "stat.unit_subs": "services",
+
+    "urgent.title": "Urgent Reminders",
+    "urgent.overdue": "Overdue",
+    "urgent.due_today": "Due Today",
+    "urgent.due_soon": "Due Soon",
+    "urgent.normal": "In Progress",
+    "agenda.upcoming_title": "Upcoming Agenda",
+    "agenda.empty": "No scheduled items nearby",
+    "agenda.day_empty": "No items scheduled on this day",
+    "agenda.selected_date": "Selected Date",
+    "agenda.count_badge": "{n} events this month",
+
+    "almanac.quick_title": "Lunar Almanac Highlights",
+    "almanac.yi": "Good",
+    "almanac.ji": "Avoid",
+    "almanac.yi_default": "All activities favorable",
+    "almanac.ji_default": "No special restrictions",
+    "almanac.view_full": "View Full Lunar Calendar",
+    "almanac.disclaimer": "Traditional folklore calendar for cultural reference only.",
+
+    "cycle.monthly": "Monthly",
+    "cycle.bimonthly": "Every 2 Months",
+    "cycle.quarterly": "Quarterly",
+    "cycle.semiannually": "Semi-Annually",
+    "cycle.annually": "Annually",
+    "cycle.once": "One-Time",
+
+    "category.all": "All Assets",
+    "category.project": "Projects",
+    "category.account": "Accounts",
+    "category.server": "Servers",
+    "category.developer": "Certificates",
+    "category.publish": "Releases",
+    "category.custom": "Custom Assets",
+
+    "settings.title": "Settings & Security Vault",
+    "settings.subtitle": "Zero Servers · Local-First · Sandbox Privacy",
+    "settings.tab_language": "Languages",
+    "settings.tab_security": "Local Vault",
+    "settings.tab_nearby": "Nearby Share",
+    "settings.tab_backup": "Backup",
+    "settings.tab_icloud": "iCloud",
+    "settings.language_title": "Display Language",
+    "settings.language_desc": "Choose your preferred UI language. Changes take effect immediately.",
+    "settings.privacy_title": "Offline Privacy First",
+    "settings.privacy_desc": "100% of your data stays locally on your device sandbox. Zero tracking, zero cloud leaks.",
+    "settings.version": "Current Version: 0.6.1",
+  },
+
+  "ja-JP": {
+    "nav.dashboard": "ダッシュボード",
+    "nav.calendar": "タイムライン",
+    "nav.renewal": "定期購読",
+    "nav.pending": "タスク管理",
+    "nav.assets": "デジタル資産",
+    "nav.almanac": "吉凶暦・黄暦",
+    "nav.security": "設定",
+    "nav.dashboard_short": "ボード",
+    "nav.calendar_short": "カレンダー",
+    "nav.renewal_short": "更新",
+    "nav.assets_short": "資産",
+
+    "app.title": "小黄リマインダー",
+    "app.subtitle": "個人資産＆定期購読マネージャー",
+    "btn.new_item": "新規追加",
+    "btn.quick_add": "クイック追加",
+    "btn.save": "保存する",
+    "btn.cancel": "キャンセル",
+    "btn.delete": "削除",
+    "btn.edit": "編集",
+    "btn.close": "閉じる",
+    "btn.search": "検索...",
+    "btn.today": "今日",
+    "btn.prev_month": "前月",
+    "btn.next_month": "翌月",
+    "btn.renew_cycle": "今期を更新する",
+    "btn.renew_short": "周期更新",
+    "btn.view_details": "詳細を見る",
+    "btn.unlock": "生体認証でロック解除",
+
+    "stat.monthly_spend": "今月の支出",
+    "stat.active_subs": "契約中サービス",
+    "stat.pending_tasks": "未完了タスク",
+    "stat.security_status": "ローカル金庫",
+    "stat.security_active": "暗号化保護中",
+    "stat.security_idle": "標準保護モード",
+    "stat.unit_currency": "¥",
+    "stat.unit_items": "件",
+    "stat.unit_subs": "件",
+
+    "urgent.title": "緊急リマインダー",
+    "urgent.overdue": "期限超過",
+    "urgent.due_today": "今日期限",
+    "urgent.due_soon": "まもなく期限",
+    "urgent.normal": "正常進行中",
+    "agenda.upcoming_title": "直近の予定",
+    "agenda.empty": "直近の予定はありません",
+    "agenda.day_empty": "この日の予定はありません",
+    "agenda.selected_date": "選択日",
+    "agenda.count_badge": "今月 {n} 件の予定",
+
+    "almanac.quick_title": "暦の吉凶速報",
+    "almanac.yi": "吉",
+    "almanac.ji": "凶",
+    "almanac.yi_default": "万事吉",
+    "almanac.ji_default": "特段の制約なし",
+    "almanac.view_full": "完全な黄暦を確認",
+    "almanac.disclaimer": "伝統的な民間伝承暦であり、文化的な参考としてご利用ください。",
+
+    "cycle.monthly": "毎月",
+    "cycle.bimonthly": "2ヶ月毎",
+    "cycle.quarterly": "四半期",
+    "cycle.semiannually": "半年毎",
+    "cycle.annually": "毎年",
+    "cycle.once": "単発",
+
+    "category.all": "すべての資産",
+    "category.project": "プロジェクト",
+    "category.account": "アカウント連携",
+    "category.server": "サーバー資産",
+    "category.developer": "証明書・資格",
+    "category.publish": "リリース記録",
+    "category.custom": "カスタム資産",
+
+    "settings.title": "設定とセキュリティ",
+    "settings.subtitle": "サーバー不要 · 完全オフライン · プライバシー保護",
+    "settings.tab_language": "言語設定",
+    "settings.tab_security": "ローカル金庫",
+    "settings.tab_nearby": "端末間共有",
+    "settings.tab_backup": "暗号化退避",
+    "settings.tab_icloud": "iCloud",
+    "settings.language_title": "表示言語 (Language)",
+    "settings.language_desc": "希望の言語を選択してください。即座に画面全体に反映されます。",
+    "settings.privacy_title": "完全オフライン保護",
+    "settings.privacy_desc": "すべてのデータは100%ローカル端末内にのみ保存され、クラウド送信や漏洩はありません。",
+    "settings.version": "バージョン: 0.6.1",
+  },
+
+  "es-ES": {
+    "nav.dashboard": "Tablero",
+    "nav.calendar": "Línea Temporal",
+    "nav.renewal": "Suscripciones",
+    "nav.pending": "Tareas",
+    "nav.assets": "Activos Digitales",
+    "nav.almanac": "Almanaque",
+    "nav.security": "Ajustes",
+    "nav.dashboard_short": "Tablero",
+    "nav.calendar_short": "Calendario",
+    "nav.renewal_short": "Renovar",
+    "nav.assets_short": "Activos",
+
+    "app.title": "Xiao Huang Reminder",
+    "app.subtitle": "Gestor de Activos y Suscripciones Personales",
+    "btn.new_item": "Nuevo Ítem",
+    "btn.quick_add": "Añadir Rápido",
+    "btn.save": "Guardar",
+    "btn.cancel": "Cancelar",
+    "btn.delete": "Eliminar",
+    "btn.edit": "Editar",
+    "btn.close": "Cerrar",
+    "btn.search": "Buscar...",
+    "btn.today": "Hoy",
+    "btn.prev_month": "Mes Anterior",
+    "btn.next_month": "Mes Siguiente",
+    "btn.renew_cycle": "Renovar Período",
+    "btn.renew_short": "Renovar",
+    "btn.view_details": "Ver Detalles",
+    "btn.unlock": "Desbloquear con Biometría",
+
+    "stat.monthly_spend": "Gasto Mensual",
+    "stat.active_subs": "Suscripciones Activas",
+    "stat.pending_tasks": "Tareas Pendientes",
+    "stat.security_status": "Bóveda Local",
+    "stat.security_active": "Cifrado Activo",
+    "stat.security_idle": "Modo Estándar",
+    "stat.unit_currency": "€",
+    "stat.unit_items": "ítems",
+    "stat.unit_subs": "servicios",
+
+    "urgent.title": "Avisos Urgentes",
+    "urgent.overdue": "Vencido",
+    "urgent.due_today": "Vence Hoy",
+    "urgent.due_soon": "Por Vencer",
+    "urgent.normal": "En Curso",
+    "agenda.upcoming_title": "Próximos Eventos",
+    "agenda.empty": "No hay eventos programados",
+    "agenda.day_empty": "Sin eventos para este día",
+    "agenda.selected_date": "Fecha Seleccionada",
+    "agenda.count_badge": "{n} eventos este mes",
+
+    "almanac.quick_title": "Almanaque Lunar",
+    "almanac.yi": "Favorable",
+    "almanac.ji": "Desfavorable",
+    "almanac.yi_default": "Todo favorable",
+    "almanac.ji_default": "Sin restricciones",
+    "almanac.view_full": "Ver Calendario Completo",
+    "almanac.disclaimer": "Calendario tradicional folclórico sólo para referencia cultural.",
+
+    "cycle.monthly": "Mensual",
+    "cycle.bimonthly": "Cada 2 Meses",
+    "cycle.quarterly": "Trimestral",
+    "cycle.semiannually": "Semestral",
+    "cycle.annually": "Anual",
+    "cycle.once": "Único",
+
+    "category.all": "Todos los Activos",
+    "category.project": "Proyectos",
+    "category.account": "Cuentas",
+    "category.server": "Servidores",
+    "category.developer": "Certificados",
+    "category.publish": "Lanzamientos",
+    "category.custom": "Personalizado",
+
+    "settings.title": "Ajustes y Seguridad",
+    "settings.subtitle": "Cero Servidores · Primero Local · Privacidad en Sandbox",
+    "settings.tab_language": "Idiomas",
+    "settings.tab_security": "Bóveda Local",
+    "settings.tab_nearby": "Transferencia",
+    "settings.tab_backup": "Copia",
+    "settings.tab_icloud": "iCloud",
+    "settings.language_title": "Idioma (Language)",
+    "settings.language_desc": "Seleccione el idioma preferido de la interfaz. Se aplica al instante.",
+    "settings.privacy_title": "Privacidad Fuera de Línea",
+    "settings.privacy_desc": "El 100% de sus datos se almacena exclusivamente en su dispositivo local. Cero fugas en la nube.",
+    "settings.version": "Versión Actual: 0.6.1",
+  },
+};
+
+const LANGUAGE_STORAGE_KEY = "xuji_language";
+
+export function getStoredLanguage() {
+  if (typeof window === "undefined") return "zh-CN";
+  try {
+    const saved = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+    if (saved && SUPPORTED_LANGUAGES.some((l) => l.code === saved)) {
+      return saved;
+    }
+    const browserLang = navigator.language || navigator.userLanguage || "";
+    if (browserLang.startsWith("zh-TW") || browserLang.startsWith("zh-HK")) return "zh-TW";
+    if (browserLang.startsWith("zh")) return "zh-CN";
+    if (browserLang.startsWith("ja")) return "ja-JP";
+    if (browserLang.startsWith("es")) return "es-ES";
+    if (browserLang.startsWith("en")) return "en-US";
+  } catch (e) {}
+  return "zh-CN";
+}
+
+export function setStoredLanguage(langCode) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, langCode);
+    window.dispatchEvent(new CustomEvent("xuji_language_changed", { detail: langCode }));
+  } catch (e) {}
+}
+
+export function t(key, lang = "zh-CN", params = {}) {
+  const dict = TRANSLATIONS[lang] || TRANSLATIONS["zh-CN"];
+  let text = dict[key] || TRANSLATIONS["zh-CN"][key] || key;
+  if (params && typeof params === "object") {
+    Object.keys(params).forEach((k) => {
+      text = text.replace(new RegExp(`\\{${k}\\}`, "g"), params[k]);
+    });
+  }
+  return text;
+}

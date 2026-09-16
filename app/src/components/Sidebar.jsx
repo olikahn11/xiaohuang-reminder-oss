@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   Sparkle,
 } from "@phosphor-icons/react";
+import { t } from "../utils/i18n.js";
 
 export const PRIMARY_NAV = [
   { key: "dashboard", label: "全景看板", icon: House },
@@ -26,6 +27,7 @@ export function Sidebar({
   renewalCount = 0,
   pendingCount = 0,
   lockEnabled = false,
+  currentLang = "zh-CN",
 }) {
   return (
     <aside className="app-sidebar" aria-label="应用导航">
@@ -63,7 +65,7 @@ export function Sidebar({
               <span className="sidebar-nav-icon">
                 <Icon size={20} weight={isActive ? "fill" : "regular"} />
               </span>
-              <span className="sidebar-nav-label">{item.label}</span>
+              <span className="sidebar-nav-label">{t("nav." + item.key, currentLang)}</span>
               {badge}
             </button>
           );
@@ -79,7 +81,7 @@ export function Sidebar({
           <span className="sidebar-nav-icon">
             <ShieldCheck size={20} weight={activeNav === "security" ? "fill" : "regular"} />
           </span>
-          <span className="sidebar-nav-label">安全中心</span>
+          <span className="sidebar-nav-label">{t("nav.security", currentLang)}</span>
           {lockEnabled ? (
             <span className="nav-badge nav-badge--success" title="加密保险箱已启用">
               <LockKey size={12} weight="fill" />

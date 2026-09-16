@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import {
   Bell,
   CloudCheck,
+  Gear,
   LockKey,
   MagnifyingGlass,
   Plus,
   X,
 } from "@phosphor-icons/react";
 import { NotificationDropdown } from "../features/reminders/NotificationDropdown.jsx";
+import { t } from "../utils/i18n.js";
 
 export function Topbar({
   title = "全景看板",
@@ -23,6 +25,8 @@ export function Topbar({
   lockEnabled,
   cloudEnabled,
   urgentCount = 0,
+  onOpenSettings,
+  currentLang = "zh-CN",
 }) {
   const [notifOpen, setNotifOpen] = useState(false);
 
@@ -40,7 +44,7 @@ export function Topbar({
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="全库搜索：项目、服务、账号或日期……"
+            placeholder={t("btn.search", currentLang)}
             aria-label="搜索记录"
           />
           {query && (
@@ -61,7 +65,7 @@ export function Topbar({
           {lockEnabled && (
             <span className="status-pill status-pill--vault" title="本地保险箱已加密锁定保护">
               <LockKey size={14} weight="fill" />
-              <span>保险箱</span>
+              <span>{t("stat.security_status", currentLang)}</span>
             </span>
           )}
           {cloudEnabled && (
@@ -96,14 +100,24 @@ export function Topbar({
           )}
         </div>
 
+        {/* 系统设置与多国语言入口 */}
+        <button
+          className="topbar-icon-button"
+          onClick={onOpenSettings}
+          aria-label={t("settings.title", currentLang)}
+          title={t("settings.title", currentLang)}
+        >
+          <Gear size={20} />
+        </button>
+
         {/* 全局快捷新建记录按钮（桌面端显示，手机端由底栏常驻 + 号负责） */}
         <button
           className="btn-primary-gradient topbar-desktop-btn"
           onClick={onQuickAdd}
-          title="新增提醒、订阅或项目记录"
+          title={t("btn.new_item", currentLang)}
         >
           <Plus size={18} weight="bold" />
-          <span>新建记录</span>
+          <span>{t("btn.new_item", currentLang)}</span>
         </button>
       </div>
     </header>

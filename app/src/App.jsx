@@ -39,6 +39,12 @@ import {
   readDeviceSecret,
   saveDeviceSecret,
 } from "./native.js";
+import {
+  getStoredLanguage,
+  setStoredLanguage,
+  SUPPORTED_LANGUAGES,
+  t,
+} from "./utils/i18n.js";
 
 const STORAGE_KEY = RECORDS_KEY;
 const BIOMETRIC_KEY = "local-vault-data-key";
@@ -69,7 +75,7 @@ export function App() {
       const demoParam = new URLSearchParams(window.location.search).get("demo");
       if (demoParam === "1") {
         return [
-          { id: "demo-1", kind: "renewal", title: "ChatGPT Plus", subtitle: "OpenAI 订阅服务", account: "lili@ai.com", amount: "145.00", cycle: "每月", dueDate: "2026-10-18", status: "active" },
+          { id: "demo-1", kind: "renewal", title: "ChatGPT Plus", subtitle: "OpenAI 订阅服务", account: "user@example.com", amount: "145.00", cycle: "每月", dueDate: "2026-10-18", status: "active" },
           { id: "demo-2", kind: "renewal", title: "阿里云 ECS", subtitle: "4C8G 云服务器", account: "aliyun-root", amount: "680.00", cycle: "每年", dueDate: "2026-09-22", status: "active" },
           { id: "demo-3", kind: "renewal", title: "苹果开发者账号", subtitle: "Apple Developer Program", account: "dev@apple.com", amount: "688.00", cycle: "每年", dueDate: "2026-12-01", status: "active" },
           { id: "demo-4", kind: "server", title: "腾讯云轻量服务器", subtitle: "香港机房 2C4G", account: "tencent-hk", amount: "34.00", cycle: "每月", dueDate: "2026-09-16", status: "active" },
@@ -97,7 +103,13 @@ export function App() {
   const [formModalOpen, setFormModalOpen] = useState(false);
   const [editingRecord, setEditingRecord] = useState(null);
   const [formDefaultContext, setFormDefaultContext] = useState({ kind: "renewal", date: "" });
-  const [securityOpen, setSecurityOpen] = useState(false);
+  const [securityOpen, setSecurityOpen] = useState(() => {
+    if (typeof window !== "undefined") {
+      const sp = new URLSearchParams(window.location.search);
+      return sp.get("settings") === "1" || sp.get("nav") === "security";
+    }
+    return false;
+  });
 
   // 搜索关键词
   const [searchQuery, setSearchQuery] = useState("");
@@ -121,6 +133,16 @@ export function App() {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 2600);
   };
+
+  const [currentLang, setCurrentLang] = useState(getStoredLanguage);
+
+  useEffect(() => {
+    const onLangChange = (e) => {
+      if (e.detail) setCurrentLang(e.detail);
+    };
+    window.addEventListener("xuji_language_changed", onLangChange);
+    return () => window.removeEventListener("xuji_language_changed", onLangChange);
+  }, []);
 
   // 持久化保存用户数据到 localStorage（防止任何数据丢失）
   useEffect(() => {
@@ -289,7 +311,10 @@ export function App() {
     almanac: { title: "择吉黄历", subtitle: "中华传统历法 · 每日宜忌 · 吉凶时辰" },
   };
 
-  const currentMeta = pageTitles[activeNav] || { title: "小黄提醒管家", subtitle: "" };
+  const currentMeta = {
+    title: t("nav." + activeNav, currentLang),
+    subtitle: t("app.subtitle", currentLang),
+  };
 
   return (
     <div className="app-layout-shell">
@@ -307,6 +332,7 @@ export function App() {
         renewalCount={renewalCount}
         pendingCount={pendingCount}
         lockEnabled={Boolean(lockConfig)}
+        currentLang={currentLang}
       />
 
       {/* 主视图视口 */}
@@ -325,6 +351,8 @@ export function App() {
           lockEnabled={Boolean(lockConfig)}
           cloudEnabled={cloudEnabled}
           urgentCount={urgentSummary.totalUrgentCount}
+          onOpenSettings={() => setSecurityOpen(true)}
+          currentLang={currentLang}
         />
 
         {/* 核心视图渲染 */}
@@ -397,6 +425,7 @@ export function App() {
         onNavigate={(key) => setActiveNav(key)}
         onQuickAdd={() => handleOpenCreate("renewal")}
         urgentCount={urgentSummary.totalUrgentCount}
+        currentLang={currentLang}
       />
 
       {/* 详情抽屉 */}
@@ -425,7 +454,7 @@ export function App() {
         />
       )}
 
-      {/* 安全中心抽屉 */}
+      {/* 安全与系统设置中心抽屉 */}
       {securityOpen && (
         <SecurityCenter
           open={securityOpen}
@@ -474,7 +503,12 @@ export function App() {
           }}
           onCloudUpload={async () => showToast("已备份至 iCloud")}
           onCloudDownload={async () => showToast("已从 iCloud 还原")}
-          onShowToast={showToast}
+          notify={showToast}
+          currentLang={currentLang}
+          onSelectLanguage={(lang) => {
+            setStoredLanguage(lang);
+            setCurrentLang(lang);
+          }}
         />
       )}
 

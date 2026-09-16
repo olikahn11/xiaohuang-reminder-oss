@@ -77,3 +77,13 @@
 - [x] 全机型（小屏、标准、Pro Max）顶部与底部 Safe Area 动态紧凑自适应，呼吸感舒适自然
 - [x] 重新构建交付最新 macOS DMG (5.2MB) 与 iPhone 真机 IPA (4.18MB)
 
+## 12. 数据彻底脱敏、多国语言 (i18n) 系统接入与双端公开版构建
+- [x] 彻底排查并清理所有个人隐私与演示数据（`INITIAL_RECORDS` 默认纯空 `[]`，全库无任何用户隐私数据，安装包适合全球用户开箱即用）
+- [x] 设置面板中新增“多国语言 (Display Language)”独立配置（支持 🇨🇳 简体中文、🇭🇰 繁體中文、🇺🇸 English、🇯🇵 日本語、🇪🇸 Español）
+- [x] 顶栏与侧边栏接入设置与多语言快捷入口，支持全系统界面与导航实时动态切换
+- [x] 全量回归自动化测试（日历、周期推期、提醒引擎、安全隔离测试全部 100% 通过）
+- [x] 重新编译生成最新 macOS DMG (`小黄提醒管家-0.6.1-macOS-AppleSilicon.dmg`, 5.57MB) 与 iPhone 真机未签名版 IPA (`小黄提醒管家-0.6.1-iPhone-Unsigned.ipa`, 4.20MB)
+- [ ] 提交最新多语言代码并推送到 GitHub 私有仓库 (`origin: https://github.com/olikahn11/xiaohuang-reminder-private.git`)
+- [ ] 将全新脱敏通用公开版双端安装包与新版本说明发布至 GitHub 公开仓库 (`oss: https://github.com/olikahn11/xiaohuang-reminder-oss.git`)
+
+
