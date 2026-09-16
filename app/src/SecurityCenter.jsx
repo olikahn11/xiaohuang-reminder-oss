@@ -78,7 +78,7 @@ export function SecurityCenter({
   onSelectLanguage,
 }) {
   const swipe = useSwipeDownToClose(onClose);
-  const [tab, setTab] = useState("guide");
+  const [tab, setTab] = useState(() => (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("tab")) || "guide");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [backupPassword, setBackupPassword] = useState("");
