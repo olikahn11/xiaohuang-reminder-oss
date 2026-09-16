@@ -83,7 +83,7 @@
 - [x] 顶栏与侧边栏接入设置与多语言快捷入口，支持全系统界面与导航实时动态切换
 - [x] 全量回归自动化测试（日历、周期推期、提醒引擎、安全隔离测试全部 100% 通过）
 - [x] 重新编译生成最新 macOS DMG (`小黄提醒管家-0.6.1-macOS-AppleSilicon.dmg`, 5.57MB) 与 iPhone 真机未签名版 IPA (`小黄提醒管家-0.6.1-iPhone-Unsigned.ipa`, 4.20MB)
-- [ ] 提交最新多语言代码并推送到 GitHub 私有仓库 (`origin: https://github.com/olikahn11/xiaohuang-reminder-private.git`)
-- [ ] 将全新脱敏通用公开版双端安装包与新版本说明发布至 GitHub 公开仓库 (`oss: https://github.com/olikahn11/xiaohuang-reminder-oss.git`)
+- [x] 提交最新多语言代码并推送到 GitHub 私有仓库 (`origin: https://github.com/olikahn11/xiaohuang-reminder-private.git`)
+- [x] 将全新脱敏通用公开版双端安装包与新版本说明发布至 GitHub 公开仓库与官方下载站 (`oss: xiaohuang-reminder-oss` & `xiaohuang-reminder-public`)
 
 
