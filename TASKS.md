@@ -99,6 +99,6 @@
 - [x] 重新编译打包 macOS Apple Silicon DMG (`deliverables/小黄提醒管家-0.6.1-macOS-AppleSilicon.dmg`, 5.3MB)
 - [x] 重新编译打包 iPhone 免签真机 IPA (`deliverables/小黄提醒管家-0.6.1-iPhone-Unsigned.ipa`, 4.0MB)
 - [x] 更新 README.md 语言支持说明
-- [ ] 提交最新代码并推送到 GitHub 私有仓库 (origin main)
-- [ ] 同步推送到 GitHub 开源公开仓库 (oss main)
-- [ ] 更新 GitHub Release 附件与发版说明
+- [x] 提交最新代码并推送到 GitHub 私有仓库 (origin main)
+- [x] 同步推送到 GitHub 开源公开仓库 (oss main)
+- [x] 更新 GitHub Release 附件与发版说明
