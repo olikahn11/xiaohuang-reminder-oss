@@ -4007,3 +4007,98 @@ html, body {
   }
 }
 
+/* ==========================================================================
+   数据储存与防丢指南卡片 (Data Storage & Safety Guide)
+   ========================================================================== */
+.guide-hero-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 18px;
+  background: #FEF9C3;
+  border: 2px solid #18181B;
+  border-radius: 14px;
+  box-shadow: 3px 3px 0px #18181B;
+}
+
+.guide-hero-icon {
+  color: #CA8A04;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.guide-hero-banner strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 900;
+  color: #18181B;
+  margin-bottom: 4px;
+}
+
+.guide-hero-banner p {
+  font-size: 13px;
+  color: #27272A;
+  line-height: 1.55;
+  font-weight: 600;
+  margin: 0;
+}
+
+.guide-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.guide-card {
+  padding: 16px;
+  background: #FFFFFF;
+  border: 1.5px solid #18181B;
+  border-radius: 14px;
+  box-shadow: 2px 2px 0px #18181B;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.guide-card.highlight {
+  background: #FFFDF5;
+  border: 2px solid #18181B;
+}
+
+.guide-card__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.guide-badge {
+  font-size: 10px;
+  font-weight: 900;
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: 1px solid #18181B;
+  background: #F4F4F5;
+  color: #18181B;
+  text-transform: uppercase;
+}
+
+.guide-badge.gold {
+  background: var(--primary-yellow);
+}
+
+.guide-card h4 {
+  font-size: 14px;
+  font-weight: 850;
+  color: #18181B;
+  margin: 0;
+}
+
+.guide-card p {
+  font-size: 13px;
+  color: #3F3F46;
+  line-height: 1.55;
+  font-weight: 550;
+  margin: 0;
+}
+
+

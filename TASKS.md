@@ -86,4 +86,12 @@
 - [x] 提交最新多语言代码并推送到 GitHub 私有仓库 (`origin: https://github.com/olikahn11/xiaohuang-reminder-private.git`)
 - [x] 将全新脱敏通用公开版双端安装包与新版本说明发布至 GitHub 公开仓库与官方下载站 (`oss: xiaohuang-reminder-oss` & `xiaohuang-reminder-public`)
 
-
+## 13. 数据存储机制与防丢失指南 (软件设置内嵌 + README/Release 全面阐释)
+- [x] 多语言与设置中心接入“数据与指南”模块（覆盖安装不丢数据原理、严禁先卸载后装警示、导出 .xuji 备份指南、换机迁移与智能周期推期）
+- [x] GitHub 核心说明文档 (README.md) 详细增补“数据存储机制与防丢失指南”
+- [x] 重新构建编译 macOS DMG 并更新 deliverables 目录 (`小黄提醒管家-0.6.1-macOS-AppleSilicon.dmg`)
+- [x] 重新构建编译带有最新设置指南界面的 iPhone IPA 并更新 deliverables 目录 (`小黄提醒管家-0.6.1-iPhone-Unsigned.ipa`)
+- [ ] 提交最新代码并推送到 GitHub 私有仓库 (origin main)
+- [ ] 同步推送到 GitHub 开源公开仓库 (oss main)
+- [ ] 更新 GitHub Release 说明与最新双端安装包文件
+- [ ] 详细向用户解答“重新安装数据是否会丢失”及“如何正确储存与备份数据”的全部疑问

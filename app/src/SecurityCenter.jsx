@@ -6,6 +6,7 @@ import {
   ArrowCircleDown,
   ArrowCircleUp,
   ArrowsLeftRight,
+  BookOpen,
   Camera,
   Check,
   CloudArrowDown,
@@ -77,7 +78,7 @@ export function SecurityCenter({
   onSelectLanguage,
 }) {
   const swipe = useSwipeDownToClose(onClose);
-  const [tab, setTab] = useState("language");
+  const [tab, setTab] = useState("guide");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [backupPassword, setBackupPassword] = useState("");
@@ -156,6 +157,7 @@ export function SecurityCenter({
   });
 
   const tabs = [
+    ["guide", BookOpen, t("settings.tab_guide", currentLang)],
     ["language", Globe, t("settings.tab_language", currentLang)],
     ["security", ShieldCheck, t("settings.tab_security", currentLang)],
     ["nearby", QrCode, t("settings.tab_nearby", currentLang)],
@@ -173,6 +175,47 @@ export function SecurityCenter({
             <nav className="security-tabs">{tabs.map(([value, Icon, label]) => <button key={value} className={tab === value ? "active" : ""} onClick={() => setTab(value)}><Icon size={19} /><span>{label}</span></button>)}</nav>
 
             <div className="security-scroll">
+              {tab === "guide" ? <div className="security-page">
+                <div className="section-copy"><h3>{t("guide.title", currentLang)}</h3><p>{t("guide.subtitle", currentLang)}</p></div>
+                
+                <div className="guide-hero-banner">
+                  <div className="guide-hero-icon"><ShieldCheck size={28} weight="fill" /></div>
+                  <div>
+                    <strong>覆盖安装 / 升级更新：100% 数据不丢失</strong>
+                    <p>直接下载新版并替换旧版，系统会自动保留沙盒本地数据。<strong>请切勿先长按卸载/删除旧 App 再安装</strong>，系统卸载会强制抹掉本地数据！</p>
+                  </div>
+                </div>
+
+                <div className="guide-cards-list">
+                  <div className="guide-card">
+                    <div className="guide-card__header"><span className="guide-badge">存储机制</span><h4>{t("guide.q1_title", currentLang)}</h4></div>
+                    <p>{t("guide.q1_desc", currentLang)}</p>
+                  </div>
+
+                  <div className="guide-card highlight">
+                    <div className="guide-card__header"><span className="guide-badge gold">防丢操作</span><h4>{t("guide.q3_title", currentLang)}</h4></div>
+                    <p>{t("guide.q3_desc", currentLang)}</p>
+                    <div style={{ marginTop: 8 }}>
+                      <ActionButton icon={FolderOpen} onClick={() => setTab("backup")}>立即前往「加密备份」保存一份</ActionButton>
+                    </div>
+                  </div>
+
+                  <div className="guide-card">
+                    <div className="guide-card__header"><span className="guide-badge">换机迁移</span><h4>{t("guide.q4_title", currentLang)}</h4></div>
+                    <p>{t("guide.q4_desc", currentLang)}</p>
+                  </div>
+
+                  <div className="guide-card">
+                    <div className="guide-card__header"><span className="guide-badge">功能技巧</span><h4>{t("guide.q5_title", currentLang)}</h4></div>
+                    <p>{t("guide.q5_desc", currentLang)}</p>
+                  </div>
+                </div>
+
+                <div className="local-facts" style={{ marginTop: 14 }}>
+                  <div><Check size={17} /><span><strong>{t("settings.privacy_title", currentLang)}</strong><small>{t("settings.privacy_desc", currentLang)}</small></span></div>
+                  <div><Check size={17} /><span><strong>{t("settings.version", currentLang)}</strong><small>macOS AppleSilicon &amp; iOS 16+ · 纯本地通用公开版</small></span></div>
+                </div>
+              </div> : null}
               {tab === "language" ? <div className="security-page">
                 <div className="section-copy"><h3>{t("settings.language_title", currentLang)}</h3><p>{t("settings.language_desc", currentLang)}</p></div>
                 <div className="language-grid">

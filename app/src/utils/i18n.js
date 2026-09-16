@@ -97,6 +97,7 @@ export const TRANSLATIONS = {
     // 设置与语言
     "settings.title": "系统设置与安全中心",
     "settings.subtitle": "零服务器 · 本地优先 · 隐私沙盒",
+    "settings.tab_guide": "数据与指南",
     "settings.tab_language": "语言设置",
     "settings.tab_security": "本地安全",
     "settings.tab_nearby": "设备互传",
@@ -106,7 +107,21 @@ export const TRANSLATIONS = {
     "settings.language_desc": "选择您偏好的界面显示语言，全系统实时生效",
     "settings.privacy_title": "离线隐私保护",
     "settings.privacy_desc": "本软件所有记录 100% 仅保存在本地设备沙盒中，零云端上传，零隐私泄露",
-    "settings.version": "当前版本：0.6.1",
+    "settings.version": "当前版本：0.6.2",
+
+    // 使用与数据防丢指南
+    "guide.title": "数据储存与防丢指南",
+    "guide.subtitle": "零云端依赖 · 本地沙盒 · 换机升级永不丢失",
+    "guide.q1_title": "1. 我的数据保存在哪里？",
+    "guide.q1_desc": "所有数据 100% 仅保存在您当前设备的本地安全沙盒（LocalStorage 与系统钥匙串）中，没有任何云端服务器，没有任何后台上传，享有绝对的数据所有权与隐私。",
+    "guide.q2_title": "2. 重新安装或覆盖升级，数据会丢吗？",
+    "guide.q2_desc": "【直接覆盖安装绝对不会丢失】！无论是 Mac 拖入应用程序替换旧版，还是 iPhone 通过签名工具覆盖升级，系统均会自动保留 App 沙盒中的数据。但请特别注意：【切勿先长按删除/卸载旧 App 再安装】，系统卸载 App 会强制清空其沙盒！",
+    "guide.q3_title": "3. 怎样做到 100% 绝对不丢失？（极力推荐）",
+    "guide.q3_desc": "在旁边「加密备份」标签中，随时点击「导出 .xuji 文件」或「复制加密文本」，发送到微信文件传输助手、备忘录或个人邮箱。无论手机丢失、电脑重装或硬件损坏，在新设备上点「选择文件恢复」，1 秒钟完整还原全部记录！",
+    "guide.q4_title": "4. 更换手机或电脑怎么迁移数据？",
+    "guide.q4_desc": "方式一：同一 Wi-Fi 下打开「设备互传」，用另一台设备扫码一键互通；方式二：通过 AirDrop 隔空投送导出的 .xuji 备份文件；方式三：在「iCloud」标签开启端到端加密同步。",
+    "guide.q5_title": "5. 周期续费怎么自动推期与提醒？",
+    "guide.q5_desc": "新建记录选择对应周期（每月、每两月、每季度、每年等）。在看板或日历中点击「完成本期续费」，系统会自动精确计算下一到期日并顺延，本期扣费将沉淀在历史记录中，绝无遗漏错报。",
   },
 
   "zh-TW": {
@@ -186,6 +201,7 @@ export const TRANSLATIONS = {
 
     "settings.title": "系統設定與安全中心",
     "settings.subtitle": "零伺服器 · 本地優先 · 隱私沙盒",
+    "settings.tab_guide": "數據與指南",
     "settings.tab_language": "語言設定",
     "settings.tab_security": "本地安全",
     "settings.tab_nearby": "設備互傳",
@@ -195,7 +211,20 @@ export const TRANSLATIONS = {
     "settings.language_desc": "選擇您偏好的界面顯示語言，全系統即時生效",
     "settings.privacy_title": "離線隱私保護",
     "settings.privacy_desc": "本軟體所有記錄 100% 僅儲存在本地設備沙盒中，零雲端上傳，零隱私洩露",
-    "settings.version": "目前版本：0.6.1",
+    "settings.version": "目前版本：0.6.2",
+
+    "guide.title": "數據儲存與防丟指南",
+    "guide.subtitle": "零雲端依賴 · 本地沙盒 · 換機升級永不丟失",
+    "guide.q1_title": "1. 我的數據保存在哪裡？",
+    "guide.q1_desc": "所有數據 100% 僅保存在您當前設備的本地安全沙盒（LocalStorage 與系統鑰匙串）中，沒有任何雲端伺服器，沒有任何後台收集，享有絕對的隱私。",
+    "guide.q2_title": "2. 重新安裝或覆蓋升級，數據會丟嗎？",
+    "guide.q2_desc": "【直接覆蓋安裝絕對不會丟失】！無論 Mac 拖入應用程式替換舊版，還是 iPhone 覆蓋安裝，系統均會保留沙盒數據。但請注意：【切勿先長按刪除舊 App 再安裝】，系統卸載 App 會清空其本地沙盒！",
+    "guide.q3_title": "3. 怎樣做到 100% 絕對不丟失？（極力推薦）",
+    "guide.q3_desc": "在「加密備份」標籤中，隨時點擊「導出 .xuji 文件」或「複製加密文本」，存入備忘錄、個人信箱或通訊軟體。無論更換設備或硬體損壞，在任何新設備點「選擇文件恢復」，1 秒鐘完整找回全部記錄！",
+    "guide.q4_title": "4. 更換手機或電腦怎麼遷移數據？",
+    "guide.q4_desc": "方式一：同一 Wi-Fi 下打開「設備互傳」，用另一台設備掃碼一鍵互通；方式二：通過 AirDrop 隔空投送導出的 .xuji 備份文件導入；方式三：在「iCloud」標籤開啟端到端加密同步。",
+    "guide.q5_title": "5. 週期續費怎麼自動推期與提醒？",
+    "guide.q5_desc": "新建記錄選擇週期（每月、每兩月、每季度等）。點擊「完成本期續費」，系統會精確計算下一到期日並順延，本期記錄沉澱在歷史中，絕無遺漏錯報。",
   },
 
   "en-US": {
@@ -275,6 +304,7 @@ export const TRANSLATIONS = {
 
     "settings.title": "Settings & Security Vault",
     "settings.subtitle": "Zero Servers · Local-First · Sandbox Privacy",
+    "settings.tab_guide": "Data Guide",
     "settings.tab_language": "Languages",
     "settings.tab_security": "Local Vault",
     "settings.tab_nearby": "Nearby Share",
@@ -284,7 +314,20 @@ export const TRANSLATIONS = {
     "settings.language_desc": "Choose your preferred UI language. Changes take effect immediately.",
     "settings.privacy_title": "Offline Privacy First",
     "settings.privacy_desc": "100% of your data stays locally on your device sandbox. Zero tracking, zero cloud leaks.",
-    "settings.version": "Current Version: 0.6.1",
+    "settings.version": "Current Version: 0.6.2",
+
+    "guide.title": "Data Storage & Safety Guide",
+    "guide.subtitle": "Zero Cloud Dependencies · Local Sandbox · Zero Data Loss",
+    "guide.q1_title": "1. Where is my data stored?",
+    "guide.q1_desc": "All records stay 100% locally on your device sandbox (LocalStorage & system keychain). There are no cloud servers and no background uploads.",
+    "guide.q2_title": "2. Will reinstalling or updating wipe my data?",
+    "guide.q2_desc": "No! Direct overwrite installation retains your sandbox data. Just DO NOT delete/uninstall the app before installing, as deleting an app clears its local sandbox.",
+    "guide.q3_title": "3. How can I guarantee zero data loss? (Recommended)",
+    "guide.q3_desc": "Go to the 'Backup' tab, click 'Export .xuji File' or copy encrypted text, and save it to your Notes or personal email. You can restore it anytime in 1 second.",
+    "guide.q4_title": "4. How do I transfer data to a new device?",
+    "guide.q4_desc": "Method 1: Use 'Nearby Share' on the same Wi-Fi. Method 2: AirDrop or send the .xuji backup file. Method 3: Enable encrypted iCloud sync.",
+    "guide.q5_title": "5. How does renewal cycle advance work?",
+    "guide.q5_desc": "Select a renewal cycle (monthly, quarterly, etc.). When you click 'Complete Renewal', the next due date is automatically computed and advanced while preserving history.",
   },
 
   "ja-JP": {
@@ -364,6 +407,7 @@ export const TRANSLATIONS = {
 
     "settings.title": "設定とセキュリティ",
     "settings.subtitle": "サーバー不要 · 完全オフライン · プライバシー保護",
+    "settings.tab_guide": "データとガイド",
     "settings.tab_language": "言語設定",
     "settings.tab_security": "ローカル金庫",
     "settings.tab_nearby": "端末間共有",
@@ -373,7 +417,20 @@ export const TRANSLATIONS = {
     "settings.language_desc": "希望の言語を選択してください。即座に画面全体に反映されます。",
     "settings.privacy_title": "完全オフライン保護",
     "settings.privacy_desc": "すべてのデータは100%ローカル端末内にのみ保存され、クラウド送信や漏洩はありません。",
-    "settings.version": "バージョン: 0.6.1",
+    "settings.version": "バージョン: 0.6.2",
+
+    "guide.title": "データ保存と安全ガイド",
+    "guide.subtitle": "クラウド非依存 · ローカル保護 · 機種変更でも安心",
+    "guide.q1_title": "1. データはどこに保存されますか？",
+    "guide.q1_desc": "すべてのデータは100%ご利用端末のローカル安全サンドボックスにのみ保存されます。外部サーバーへの送信はありません。",
+    "guide.q2_title": "2. 上書きインストールでデータは消えますか？",
+    "guide.q2_desc": "直接上書きインストールすればデータは消えません。ただし、古いアプリをアンインストール・削除してから新規インストールするとサンドボックスが消去されるのでご注意ください。",
+    "guide.q3_title": "3. 完全にデータを守る方法は？（推奨）",
+    "guide.q3_desc": "「暗号化退避」タブで「.xuji ファイル書き出し」または暗号化テキストを保存してください。いつでも1秒で復元できます。",
+    "guide.q4_title": "4. 新しい端末へ移行するには？",
+    "guide.q4_desc": "同一Wi-Fiでの端末間共有QRスキャン、AirDropでのファイル共有、または暗号化iCloud同期をご利用ください。",
+    "guide.q5_title": "5. 定期更新の仕組みは？",
+    "guide.q5_desc": "周期（毎月、四半期など）を設定し、「今期を更新する」を押すと自動で次回到期日が計算・更新されます。",
   },
 
   "es-ES": {
@@ -453,6 +510,7 @@ export const TRANSLATIONS = {
 
     "settings.title": "Ajustes y Seguridad",
     "settings.subtitle": "Cero Servidores · Primero Local · Privacidad en Sandbox",
+    "settings.tab_guide": "Datos y Guía",
     "settings.tab_language": "Idiomas",
     "settings.tab_security": "Bóveda Local",
     "settings.tab_nearby": "Transferencia",
@@ -462,7 +520,20 @@ export const TRANSLATIONS = {
     "settings.language_desc": "Seleccione el idioma preferido de la interfaz. Se aplica al instante.",
     "settings.privacy_title": "Privacidad Fuera de Línea",
     "settings.privacy_desc": "El 100% de sus datos se almacena exclusivamente en su dispositivo local. Cero fugas en la nube.",
-    "settings.version": "Versión Actual: 0.6.1",
+    "settings.version": "Versión Actual: 0.6.2",
+
+    "guide.title": "Guía de Seguridad y Datos",
+    "guide.subtitle": "Sin Servidores · Sandbox Local · Cero Pérdida de Datos",
+    "guide.q1_title": "1. ¿Dónde se guardan mis datos?",
+    "guide.q1_desc": "El 100% de sus datos se almacena localmente en el sandbox seguro de su dispositivo. No hay servidores en la nube ni transferencias externas.",
+    "guide.q2_title": "2. ¿Perderé mis datos al reinstalar o actualizar?",
+    "guide.q2_desc": "¡No al sobrescribir! La instalación directa de actualización conserva sus datos. Solo asegúrese de NO desinstalar la app antes de actualizar.",
+    "guide.q3_title": "3. ¿Cómo garantizar 100% que nunca se pierdan?",
+    "guide.q3_desc": "En 'Copia', exporte el archivo .xuji o copie el texto cifrado en sus Notas o correo personal. Podrá restaurarlo en 1 segundo.",
+    "guide.q4_title": "4. ¿Cómo transferir datos a otro dispositivo?",
+    "guide.q4_desc": "Use Transferencia cercana en el mismo Wi-Fi, AirDrop con el archivo .xuji, o active la sincronización con iCloud cifrada.",
+    "guide.q5_title": "5. ¿Cómo funciona la renovación periódica?",
+    "guide.q5_desc": "Elija un ciclo y, al pulsar 'Renovar Período', la app calculará la próxima fecha de vencimiento conservando el historial.",
   },
 };
 
