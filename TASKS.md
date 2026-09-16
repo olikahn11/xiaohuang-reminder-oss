@@ -91,7 +91,14 @@
 - [x] GitHub 核心说明文档 (README.md) 详细增补“数据存储机制与防丢失指南”
 - [x] 重新构建编译 macOS DMG 并更新 deliverables 目录 (`小黄提醒管家-0.6.1-macOS-AppleSilicon.dmg`)
 - [x] 重新构建编译带有最新设置指南界面的 iPhone IPA 并更新 deliverables 目录 (`小黄提醒管家-0.6.1-iPhone-Unsigned.ipa`)
-- [x] 提交最新代码并推送到 GitHub 私有仓库 (origin main)
-- [x] 同步推送到 GitHub 开源公开仓库 (oss main)
-- [x] 更新 GitHub Release 说明与最新双端安装包文件
 - [x] 详细向用户解答“重新安装数据是否会丢失”及“如何正确储存与备份数据”的全部疑问
+
+## 14. 多语言系统全面扩充 (中、日、韩、英及欧洲主流语言)
+- [x] 扩展 `i18n.js` 语言字典：中文（简/繁）、日本語、한국어、English、Français、Deutsch、Español、Italiano、Português、Русский（共 11 种主流语言、92 个词条 100% 完整覆盖）
+- [x] 优化设置中心多语言卡片自适应网格排版（宽屏双列自适应 + 移动端单列贴合）
+- [x] 重新编译打包 macOS Apple Silicon DMG (`deliverables/小黄提醒管家-0.6.1-macOS-AppleSilicon.dmg`, 5.3MB)
+- [x] 重新编译打包 iPhone 免签真机 IPA (`deliverables/小黄提醒管家-0.6.1-iPhone-Unsigned.ipa`, 4.0MB)
+- [x] 更新 README.md 语言支持说明
+- [ ] 提交最新代码并推送到 GitHub 私有仓库 (origin main)
+- [ ] 同步推送到 GitHub 开源公开仓库 (oss main)
+- [ ] 更新 GitHub Release 附件与发版说明

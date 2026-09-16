@@ -3773,6 +3773,12 @@ html, body {
   margin-top: 4px;
 }
 
+@media (min-width: 520px) {
+  .language-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 .language-card {
   display: flex;
   align-items: center;
