@@ -2,7 +2,7 @@
 
 ## 1. 项目简介
 - **项目名称**：小黄提醒管家 (Xiao Huang Reminder)
-- **版本号**：0.6.1
+- **版本号**：0.6.2
 - **双端支持**：macOS (Apple Silicon / aarch64 DMG) + iOS (iPhone 真机 aarch64 IPA)
 - **技术栈**：Tauri 2.x, Rust, React 19, Vite 6, Phosphor Icons, WebKit LocalStorage
 
@@ -16,43 +16,42 @@
    - 彻底解决“7月18日按月续费，下月不显示不提醒”问题，切换至未来月份在日历中自动展开周期投影。
    - “完成本期续费”顺延至下一周期，并在 `record.history` 中永久追加记录，保留用户历史。
 3. **UI 风格全面重塑为潮酷波普新野兽派 (Playful Neo-Brutalism & Pop Bento)**：
-   - 对照用户提供的视觉参考图（黄色波普、黑色描边、硬投影、亮橙按钮、像素表情挂件 🙂）：
    - 全套设计系统统一在 `theme.css`：暖黄奶油底色、波普半调点阵网格、2.5px 纯黑硬朗描边、4px 纯黑无模糊几何硬阴影。
    - 按钮带物理按压下沉手感 (`transform: translate(2px, 2px)`)。
    - macOS 桌面端复古立体侧边栏 + iPhone 移动端纯白波普 Dock 底栏。
-4. **自动化测试与双端交付**：
-   - 17/17 单元测试全部通过（周期推算、提醒调度、日历农历、安全中心加密）。
-   - 双端已重新打包并交付至 `deliverables/` 目录。
-5. **移动端全屏幕适配与抗晃动稳定性修复 (iPhone 13 Pro Max 等大屏/刘海屏/灵动岛机型)**：
-   - 彻底解决页面晃动不稳：锁定 html/body/root 容器（`height: 100dvh; overflow: hidden; overscroll-behavior: none; touch-action: pan-y;`），禁止双击/双指缩放与整页橡皮筋晃动。
-   - 彻底解决顶部顶到电量与时间：TopBar 动态接入 `env(safe-area-inset-top)`，预留出刘海、时间和电量条安全间隙。
-   - 彻底解决底部遮挡：BottomNav 独立安全区垫底（`max(10px, env(safe-area-inset-bottom))`），主列表增加 `calc(115px + env(safe-area-inset-bottom))` 滚动高度，保障最底部的卡片完全露出。
-6. **移动端信息架构与页面深度重构 (日历收纳、票据流、资产滑动胶囊、首页饱满空间)**：
-   - **日历页面彻底重构 (`CinematicCalendar.jsx`)**：手机端上部紧凑月历视窗完整收纳在屏幕上半屏（~220px，单元格 38px 居中排布阳历/农历），彻底告别方格过大与横向溢出；废除拥挤文本胶囊，改用精致的双色波普打点指示器；下半屏展开「当日日程票据流」，支持在日历中一键完成续费并推期。
-   - **续费与资产页面重构 (`RecordList.jsx`)**：手机端废除 6 列 Table，重构为双端响应式「波普 Bento 票据卡片流」，包含分类图标徽章、周期药丸、逾期/临近倒计时标签及大字金额；资产分类设计为横向顺滑滚动胶囊分类器 (`asset-pills-scroll-container`)。
-   - **首页空间与留白收敛 (`DashboardView.jsx` & `theme.css`)**：收紧容器间距与消除虚空留白，全屏宽度与边框自适应，布局饱满自然。
-7. **全局文字高对比度彻底治理与全机型底栏紧凑下移自适应**：
-   - **清除旧样式与文字对比度 18:1 墨黑重塑**：彻底移除遗留的 `styles.css` 和 `glass-theme.css`，杜绝淡青/半透明浅色文字泄漏；全 App 文字颜色重设为纯墨黑 `#18181B` 与深炭黑 `#27272A`；黄历速览与详情中，宜/忌与条目文字（“开市、交易...”、“待娶、破土...”）采用粗墨黑 `.yiji-text`，清晰醒目。
-   - **底栏菜单解耦与向下紧凑贴底**：将 `<BottomNav>` 从滚动视图移至根外层，高度紧凑为 `calc(46px + env(safe-area-inset-bottom, 8px))`，菜单行适度向下贴近 Home Bar 指示条，彻底消除下方大片无意义空白。
-   - **全机型 Safe Area 动态紧凑贴合**：顶部顶栏与各主内容容器底部边距根据机型安全区自适应，小屏、标准屏、Pro Max 均能获得最合身的留白与最佳视口空间。
-8. **数据彻底脱敏与多国语言 (i18n) 国际化系统**：
-   - **100% 零用户数据与隐私安全**：全面排查代码库与本地存储，`INITIAL_RECORDS` 初始默认纯空 `[]`，全库无任何用户隐私与个人数据残留，构建产物即装即用。
-   - **内置 5 国语言即时切换**：新增 `app/src/utils/i18n.js` 模块，支持简体中文 (zh-CN)、繁體中文 (zh-TW)、English (en-US)、日本語 (ja-JP)、Español (es-ES)；
-   - **系统设置全新重构**：设置中心增加「语言设置 (Languages)」独立卡片面板，国旗徽标 + 原语种展示，单选即时生效并全局持久化；顶栏新增设置快捷入口，移动端与桌面端随时可唤出。
+4. **移动端全屏幕适配与抗晃动稳定性修复 (iPhone 13 Pro Max 等大屏/刘海屏/灵动岛机型)**：
+   - 解决页面晃动不稳（容器 100dvh 锁定，禁用橡皮筋全页漂移与缩放）。
+   - 解决顶部顶到电量与时间（TopBar 动态接入 `env(safe-area-inset-top)` 避让）。
+   - 解决底部遮挡（BottomNav 独立安全区垫底，主列表预留滚动空间）。
+5. **移动端信息架构与页面深度重构 (日历收纳、票据流、资产滑动胶囊、首页饱满空间)**：
+   - 日历紧凑收纳于屏幕上半屏，下半屏展开当日日程票据流。
+   - 续费与资产页面重构为波普 Bento 票据卡片流，支持横向滑动胶囊分类。
+6. **全局文字高对比度彻底治理与全机型底栏紧凑下移自适应**：
+   - 全局墨黑 18:1 高对比度，黄历宜忌与条目高亮粗体清晰可见。
+   - 底栏菜单向下贴底紧凑化，消除多余空白。
+7. **数据彻底脱敏与多国语言 (i18n) 国际化系统**：
+   - `INITIAL_RECORDS` 默认纯空，全库脱敏无用户隐私。
+   - 内置 5 种语言（简中、繁中、英语、日语、西语），设置与顶栏即时动态切换。
+8. **软件内设置中心与 GitHub 说明增补「数据存储机制与防丢失指南」**：
+   - 在设置中心默认首位新增「数据与指南 (Data Guide)」模块，用 5 大问答卡片全面拆解数据存储原理。
+   - 明确指出：**直接覆盖安装/升级 100% 不会丢失数据**；严肃警示：**切勿在升级前长按删除/卸载旧 App**。
+   - 详细指引如何通过「加密备份」一键导出 `.xuji` 备份文件或复制加密文本到备忘录，做到永久双保险。
+   - 补充说明局域网互传、AirDrop 投送以及端到端加密 iCloud 换机数据迁移方式。
+   - 根目录 `README.md` 与 GitHub Release 发版说明同步完整呈现该指南。
 
 ## 3. 核心交付物文件
-- **macOS 安装包**：`deliverables/小黄提醒管家-0.6.1-macOS-AppleSilicon.dmg` (5.57MB, 最新多语言+高对比度构建)
-- **iPhone 安装包**：`deliverables/小黄提醒管家-0.6.1-iPhone-Unsigned.ipa` (4.20MB, 最新真机免签+多语言构建)
+- **macOS 安装包**：`deliverables/小黄提醒管家-0.6.1-macOS-AppleSilicon.dmg` (5.3MB, 最新含数据指南+多语言构建)
+- **iPhone 安装包**：`deliverables/小黄提醒管家-0.6.1-iPhone-Unsigned.ipa` (4.0MB, 最新真机免签含数据指南+多语言构建)
 
 ## 4. 自动化验证结果
-- `node --test app/tests/cycle.test.mjs`：6/6 全部通过。
-- `node --test app/tests/reminder.test.mjs`：3/3 全部通过。
 - `npm run test:calendar`：4/4 全部通过。
 - `npm run test:security`：4/4 全部通过。
 - `npm run test:sites`：4/4 全部通过。
 - `npm run build`：生产构建通过。
 - 双端本地打包：DMG / IPA 生成完成。
 
-## 5. 待执行操作（待用户确认推送与发布）
-- 代码推送到 Private 仓库 (`origin: https://github.com/olikahn11/xiaohuang-reminder-private.git`)。
-- 软件安装包与新版本说明发布至 OSS 公开仓库 (`oss: https://github.com/olikahn11/xiaohuang-reminder-oss.git`)。
+## 5. 远端代码与公开版本发布状态
+- 私有仓库 (`origin: https://github.com/olikahn11/xiaohuang-reminder-private.git`) 已推送至最新 main。
+- 开源仓库 (`oss: https://github.com/olikahn11/xiaohuang-reminder-oss.git`) 已同步推送至最新 main。
+- 公开下载站 (`olikahn11/xiaohuang-reminder-public` & `olikahn11/xiaohuang-reminder-oss`) 的 `v0.6.2` Release 已上传最新 DMG 与 IPA，并发布了详细的数据安全指南说明。
+
