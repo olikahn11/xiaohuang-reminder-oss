@@ -105,6 +105,7 @@
 - [x] 定位并修复 App 挂载与前台聚焦时通知权限状态丢失问题（`isPermissionGranted` + `onAction` 接入）
 - [x] 编译生成最新真机版 iPhone IPA 与 macOS DMG 安装包并同步到 deliverables
 - [x] 运行端到端与全量自动化测试
-- [ ] 提交代码并同步推送到 GitHub 仓库 (origin, oss)
-- [ ] 更新 GitHub Release 附件与说明
+- [x] 提交代码并同步推送到 GitHub 仓库 (origin, oss)
+- [x] 更新 GitHub Release 附件与说明
+
 

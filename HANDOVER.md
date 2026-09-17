@@ -54,7 +54,8 @@
 - 双端本地打包：macOS DMG (5.0MB) 与 iPhone IPA (4.0MB) 重新编译生成完成。
 
 ## 5. 远端代码与公开版本发布状态
-- 准备提交修复并推送至 GitHub 仓库 (`origin main` 与 `oss main`)。
-- 准备更新 GitHub Release `v0.6.2` 附件与说明。
+- 修复代码已提交并推送至私有仓库 (`origin: https://github.com/olikahn11/xiaohuang-reminder-private.git`) 与开源仓库 (`oss: https://github.com/olikahn11/xiaohuang-reminder-oss.git`) 的 `main` 分支。
+- GitHub Release `v0.6.2` 附件已使用 `--clobber` 覆写更新为最新的修复版 DMG 与 IPA 安装包，并补充了通知系统三项缺陷修复说明。
+
 
 
