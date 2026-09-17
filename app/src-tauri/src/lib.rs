@@ -73,6 +73,23 @@ fn schedule_macos_reminders(_reminders: Vec<MacReminder>) -> Result<usize, Strin
   Err("macOS reminders are only available on macOS".to_string())
 }
 
+#[cfg(target_os = "macos")]
+#[tauri::command]
+fn request_macos_notification_permission() -> Result<bool, String> {
+  use objc2_user_notifications::{UNAuthorizationOptions, UNUserNotificationCenter};
+  let center = UNUserNotificationCenter::currentNotificationCenter();
+  let options = UNAuthorizationOptions::Alert | UNAuthorizationOptions::Sound | UNAuthorizationOptions::Badge;
+  let block = block2::RcBlock::new(|_granted: objc2::runtime::Bool, _error: *mut objc2_foundation::NSError| {});
+  center.requestAuthorizationWithOptions_completionHandler(options, &block);
+  Ok(true)
+}
+
+#[cfg(not(target_os = "macos"))]
+#[tauri::command]
+fn request_macos_notification_permission() -> Result<bool, String> {
+  Ok(true)
+}
+
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 struct NearbyTransfer {
@@ -356,6 +373,7 @@ pub fn run() {
     })
     .invoke_handler(tauri::generate_handler![
       schedule_macos_reminders,
+      request_macos_notification_permission,
       start_nearby_transfer,
       receive_nearby_transfer,
       save_device_secret,

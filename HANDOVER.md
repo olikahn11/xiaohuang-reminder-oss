@@ -37,21 +37,24 @@
    - 明确指出：**直接覆盖安装/升级 100% 不会丢失数据**；严肃警示：**切勿在升级前长按删除/卸载旧 App**。
    - 详细指引如何通过「加密备份」一键导出 `.xuji` 备份文件或复制加密文本到备忘录，做到永久双保险。
    - 补充说明局域网互传、AirDrop 投送以及端到端加密 iCloud 换机数据迁移方式。
-   - 根目录 `README.md` 与 GitHub Release 发版说明同步完整呈现该指南。
+9. **通知系统关键缺陷彻底修复（声音缺失、点击通知闪退、权限状态丢失）**：
+   - **点击通知闪退**：排查并定位 iOS `NotificationHandler.swift` 中强制解包 `notificationsMap[request.identifier]!` 的系统级 Crash，改为安全可选链解包，彻底消除 SIGABRT 闪退。
+   - **通知声音缺失**：在 `Notification.swift` 中将 `content.sound` 默认调度为系统标准提示音 `UNNotificationSound.default`；同时在前端 `reminderEngine.js` 中新增纯 Web Audio 原生合成的清脆双音提示铃声 `playNotificationChime()` (E5 -> A5)，无论前台系统通知均有清脆声响。
+   - **通知权限状态丢失**：在 `App.jsx` 挂载及窗口 `focus` 事件中接入 `isPermissionGranted()` 与 `onAction` 监听，修复每次进 App 权限重置为“未开启”的缺陷。
 
 ## 3. 核心交付物文件
-- **macOS 安装包**：`deliverables/小黄提醒管家-0.6.1-macOS-AppleSilicon.dmg` (5.3MB, 最新含数据指南+多语言构建)
-- **iPhone 安装包**：`deliverables/小黄提醒管家-0.6.1-iPhone-Unsigned.ipa` (4.0MB, 最新真机免签含数据指南+多语言构建)
+- **macOS 安装包**：`deliverables/小黄提醒管家-0.6.1-macOS-AppleSilicon.dmg` (5.0MB, 包含通知声音/权限状态修复)
+- **iPhone 安装包**：`deliverables/小黄提醒管家-0.6.1-iPhone-Unsigned.ipa` (4.0MB, 包含点击通知防闪退/系统提示音修复)
 
 ## 4. 自动化验证结果
 - `npm run test:calendar`：4/4 全部通过。
 - `npm run test:security`：4/4 全部通过。
 - `npm run test:sites`：4/4 全部通过。
 - `npm run build`：生产构建通过。
-- 双端本地打包：DMG / IPA 生成完成。
+- 双端本地打包：macOS DMG (5.0MB) 与 iPhone IPA (4.0MB) 重新编译生成完成。
 
 ## 5. 远端代码与公开版本发布状态
-- 私有仓库 (`origin: https://github.com/olikahn11/xiaohuang-reminder-private.git`) 已推送至最新 main。
-- 开源仓库 (`oss: https://github.com/olikahn11/xiaohuang-reminder-oss.git`) 已同步推送至最新 main。
-- 公开下载站 (`olikahn11/xiaohuang-reminder-public` & `olikahn11/xiaohuang-reminder-oss`) 的 `v0.6.2` Release 已上传最新 DMG 与 IPA，并发布了详细的数据安全指南说明。
+- 准备提交修复并推送至 GitHub 仓库 (`origin main` 与 `oss main`)。
+- 准备更新 GitHub Release `v0.6.2` 附件与说明。
+
 

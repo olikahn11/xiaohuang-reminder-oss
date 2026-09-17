@@ -97,8 +97,14 @@
 - [x] 扩展 `i18n.js` 语言字典：中文（简/繁）、日本語、한국어、English、Français、Deutsch、Español、Italiano、Português、Русский（共 11 种主流语言、92 个词条 100% 完整覆盖）
 - [x] 优化设置中心多语言卡片自适应网格排版（宽屏双列自适应 + 移动端单列贴合）
 - [x] 重新编译打包 macOS Apple Silicon DMG (`deliverables/小黄提醒管家-0.6.1-macOS-AppleSilicon.dmg`, 5.3MB)
-- [x] 重新编译打包 iPhone 免签真机 IPA (`deliverables/小黄提醒管家-0.6.1-iPhone-Unsigned.ipa`, 4.0MB)
-- [x] 更新 README.md 语言支持说明
-- [x] 提交最新代码并推送到 GitHub 私有仓库 (origin main)
-- [x] 同步推送到 GitHub 开源公开仓库 (oss main)
 - [x] 更新 GitHub Release 附件与发版说明
+
+## 15. 通知系统严重缺陷修复（声音缺失、点击通知闪退、权限状态丢失）
+- [x] 定位并修复 iOS Swift `NotificationHandler.swift` 致命崩溃问题（点击通知解包 nil 导致闪退）
+- [x] 定位并修复通知声音缺失问题（UNNotificationSound.default 原生系统声音调度 + 纯 Web Audio 双音合成提示铃声）
+- [x] 定位并修复 App 挂载与前台聚焦时通知权限状态丢失问题（`isPermissionGranted` + `onAction` 接入）
+- [x] 编译生成最新真机版 iPhone IPA 与 macOS DMG 安装包并同步到 deliverables
+- [x] 运行端到端与全量自动化测试
+- [ ] 提交代码并同步推送到 GitHub 仓库 (origin, oss)
+- [ ] 更新 GitHub Release 附件与说明
+

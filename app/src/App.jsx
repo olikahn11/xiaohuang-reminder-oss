@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { isTauri } from "@tauri-apps/api/core";
 import { openUrl } from "@tauri-apps/plugin-opener";
+import { isPermissionGranted, onAction } from "@tauri-apps/plugin-notification";
 
 // 基础与公共组件
 import { Sidebar } from "./components/Sidebar.jsx";
@@ -175,15 +176,40 @@ export function App() {
     return () => clearInterval(timer);
   }, [records]);
 
-  // 挂载时检查系统通知权限
+  // 挂载及获得焦点时检查系统通知权限
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      if (isTauri()) {
-        // Tauri 权限
-      } else if ("Notification" in window) {
-        setPermissionGranted(Notification.permission === "granted");
+    let isMounted = true;
+    const checkPerm = async () => {
+      try {
+        if (isTauri()) {
+          const granted = await isPermissionGranted().catch(() => false);
+          if (isMounted) setPermissionGranted(Boolean(granted));
+        } else if (typeof window !== "undefined" && "Notification" in window) {
+          if (isMounted) setPermissionGranted(Notification.permission === "granted");
+        }
+      } catch (e) {
+        console.warn("检查通知权限失败:", e);
       }
+    };
+
+    checkPerm();
+    window.addEventListener("focus", checkPerm);
+
+    // 监听系统通知点击激活事件，保证点击通知安全唤醒并不发生未捕获异常
+    let unlistenAction;
+    if (isTauri()) {
+      onAction((notification) => {
+        console.log("Notification action received:", notification);
+      }).then((fn) => {
+        unlistenAction = fn;
+      }).catch(() => {});
     }
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener("focus", checkPerm);
+      if (unlistenAction) unlistenAction();
+    };
   }, []);
 
   const handleRequestPermission = async () => {

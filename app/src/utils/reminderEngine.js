@@ -147,6 +147,7 @@ export async function syncSystemReminders(records) {
             id: notifId,
             title: alertTitle,
             body: alertBody,
+            sound: "default",
             schedule: Schedule.at(remindDate),
           });
         } catch (err) {
@@ -209,12 +210,52 @@ export function getUrgentSummary(records) {
 }
 
 /**
+ * 播放清脆悦耳的双音提示铃声 (E5 -> A5)
+ * 纯 Web Audio 原生合成，全平台（macOS、iOS、浏览器）无需外部音频文件即可即时发声
+ */
+export function playNotificationChime() {
+  try {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return;
+    const ctx = new AudioContextClass();
+    const now = ctx.currentTime;
+
+    // 音符 1: E5 (659.25 Hz)
+    const osc1 = ctx.createOscillator();
+    const gain1 = ctx.createGain();
+    osc1.type = "sine";
+    osc1.frequency.setValueAtTime(659.25, now);
+    gain1.gain.setValueAtTime(0.35, now);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+    osc1.connect(gain1);
+    gain1.connect(ctx.destination);
+    osc1.start(now);
+    osc1.stop(now + 0.35);
+
+    // 音符 2: A5 (880 Hz)
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.type = "sine";
+    osc2.frequency.setValueAtTime(880, now + 0.12);
+    gain2.gain.setValueAtTime(0.4, now + 0.12);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+    osc2.connect(gain2);
+    gain2.connect(ctx.destination);
+    osc2.start(now + 0.12);
+    osc2.stop(now + 0.6);
+  } catch (e) {
+    // ignore
+  }
+}
+
+/**
  * 立即发送一条前台/系统测试或触发通知
  */
 export async function triggerImmediateNotification(title, body) {
+  playNotificationChime();
   if (isTauri()) {
     try {
-      await sendNotification({ title, body });
+      await sendNotification({ title, body, sound: "default" });
       return true;
     } catch {
       // fallback
