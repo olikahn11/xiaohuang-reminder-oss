@@ -7,12 +7,11 @@ mkdir -p deliverables
 cp "app/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/小黄提醒管家_0.6.3_aarch64.dmg" "deliverables/小黄提醒管家-0.6.3-macOS-AppleSilicon.dmg" || true
 
 echo "Copying IPA..."
-# Tauri puts it in gen/apple/build/arm64-apple-ios/release/Release-iphoneos/
-cp "app/src-tauri/gen/apple/build/arm64-apple-ios/release/Release-iphoneos/xuji.ipa" "deliverables/小黄提醒管家-0.6.3-iPhone-Unsigned.ipa" || true
+cp "app/src-tauri/gen/apple/build/arm64/小黄提醒管家.ipa" "deliverables/小黄提醒管家-0.6.3-iPhone-Unsigned.ipa" || true
 
 echo "Adding to git..."
 git add .
-git commit -m "chore(release): bump version to 0.6.3 with multiple bug fixes and currency support"
+git commit -m "chore(release): bump version to 0.6.3 with multiple bug fixes and currency support" || true
 
 echo "Pushing to origin..."
 git push origin HEAD:main
@@ -26,6 +25,6 @@ gh release create v0.6.3 \
     --title "v0.6.3 (多币种结算、稳定性与性能更新)" \
     --notes-file release_notes_v0.6.3.md \
     "deliverables/小黄提醒管家-0.6.3-macOS-AppleSilicon.dmg" \
-    "deliverables/小黄提醒管家-0.6.3-iPhone-Unsigned.ipa"
+    "deliverables/小黄提醒管家-0.6.3-iPhone-Unsigned.ipa" || true
 
 echo "Done!"
