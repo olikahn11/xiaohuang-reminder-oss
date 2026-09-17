@@ -109,3 +109,13 @@
 - [x] 更新 GitHub Release 附件与说明
 
 
+## 16. 全局提醒与日历稳定性及体验优化 (Issue #15 Follow-ups)
+- [x] 优化快到期事件判定阈值（`getUrgentSummary` 从 <=3 天放宽至 <=7 天）
+- [x] 修复通知铃音在 macOS 原生系统下的适配逻辑（iOS 发送 default，macOS 发送 Ping）
+- [x] 修正移动端首页“待提醒日程项”统计卡片点击导航目标（从 `calendar` 修正为直接展示列表的 `pending`）
+- [x] 强化订阅/续费事项表单校验机制（选择续费类型时强制校验周期、到期日与金额）
+- [x] 彻底修复日历页面点选特定日期后触发前端 React 致命崩溃白屏（优化 `lunar-javascript` 数组结果可选链式调用保护）
+- [x] 接入多币种记录与金额结算体系（新增 `currencyUtils`，支持常见法币与汇率预估转换并在列表页统一展示当前币种符号）
+- [x] 彻底解除移动端底栏菜单强制最小高度设定限制，使底部留白压缩贴合机型原生 Home 条
+- [ ] 重新构建编译 macOS DMG 与 iPhone IPA
+- [ ] 提交修改并推送到 GitHub 仓库 (origin, oss)

@@ -2,60 +2,34 @@
 
 ## 1. 项目简介
 - **项目名称**：小黄提醒管家 (Xiao Huang Reminder)
-- **版本号**：0.6.2
+- **版本号**：0.6.3
 - **双端支持**：macOS (Apple Silicon / aarch64 DMG) + iOS (iPhone 真机 aarch64 IPA)
 - **技术栈**：Tauri 2.x, Rust, React 19, Vite 6, Phosphor Icons, WebKit LocalStorage
 
 ## 2. 最近完成工作（本轮重点）
-1. **提醒系统核心修复**：
-   - 彻底解决提醒不可用问题，增加全局自动调度引擎 `reminderEngine.js`，启动与数据变更时全生命周期自动排期。
-   - macOS 原生接入 `UNUserNotificationCenter` 权限申请 (`requestAuthorizationWithOptions`) 与声音通知。
-   - iOS 原生接入本地通知排期 (`Schedule.at` + `cancelAll`)。
-2. **周期续费与多月日历展开**：
-   - 实现通用周期推算引擎 `cycleUtils.js`，支持每月、每双月、每季度、每半年、每年以及月末边界推算。
-   - 彻底解决“7月18日按月续费，下月不显示不提醒”问题，切换至未来月份在日历中自动展开周期投影。
-   - “完成本期续费”顺延至下一周期，并在 `record.history` 中永久追加记录，保留用户历史。
-3. **UI 风格全面重塑为潮酷波普新野兽派 (Playful Neo-Brutalism & Pop Bento)**：
-   - 全套设计系统统一在 `theme.css`：暖黄奶油底色、波普半调点阵网格、2.5px 纯黑硬朗描边、4px 纯黑无模糊几何硬阴影。
-   - 按钮带物理按压下沉手感 (`transform: translate(2px, 2px)`)。
-   - macOS 桌面端复古立体侧边栏 + iPhone 移动端纯白波普 Dock 底栏。
-4. **移动端全屏幕适配与抗晃动稳定性修复 (iPhone 13 Pro Max 等大屏/刘海屏/灵动岛机型)**：
-   - 解决页面晃动不稳（容器 100dvh 锁定，禁用橡皮筋全页漂移与缩放）。
-   - 解决顶部顶到电量与时间（TopBar 动态接入 `env(safe-area-inset-top)` 避让）。
-   - 解决底部遮挡（BottomNav 独立安全区垫底，主列表预留滚动空间）。
-5. **移动端信息架构与页面深度重构 (日历收纳、票据流、资产滑动胶囊、首页饱满空间)**：
-   - 日历紧凑收纳于屏幕上半屏，下半屏展开当日日程票据流。
-   - 续费与资产页面重构为波普 Bento 票据卡片流，支持横向滑动胶囊分类。
-6. **全局文字高对比度彻底治理与全机型底栏紧凑下移自适应**：
-   - 全局墨黑 18:1 高对比度，黄历宜忌与条目高亮粗体清晰可见。
-   - 底栏菜单向下贴底紧凑化，消除多余空白。
-7. **数据彻底脱敏与多语言 (i18n) 全球化系统扩充**：
-   - `INITIAL_RECORDS` 默认纯空，全库脱敏无用户隐私。
-   - 内置中、日、韩、英及欧洲主要语言共 11 种主流语言（🇨🇳 简体中文、🇭🇰 繁體中文、🇯🇵 日本語、🇰🇷 한국어、🇺🇸 English、🇫🇷 Français、🇩🇪 Deutsch、🇪🇸 Español、🇮🇹 Italiano、🇵🇹 Português、🇷🇺 Русский），全部 92 个词条 100% 完整覆盖，设置与顶栏即时动态切换。
-8. **软件内设置中心与 GitHub 说明增补「数据存储机制与防丢失指南」**：
-   - 在设置中心默认首位新增「数据与指南 (Data Guide)」模块，用 5 大问答卡片全面拆解数据存储原理。
-   - 明确指出：**直接覆盖安装/升级 100% 不会丢失数据**；严肃警示：**切勿在升级前长按删除/卸载旧 App**。
-   - 详细指引如何通过「加密备份」一键导出 `.xuji` 备份文件或复制加密文本到备忘录，做到永久双保险。
-   - 补充说明局域网互传、AirDrop 投送以及端到端加密 iCloud 换机数据迁移方式。
-9. **通知系统关键缺陷彻底修复（声音缺失、点击通知闪退、权限状态丢失）**：
-   - **点击通知闪退**：排查并定位 iOS `NotificationHandler.swift` 中强制解包 `notificationsMap[request.identifier]!` 的系统级 Crash，改为安全可选链解包，彻底消除 SIGABRT 闪退。
-   - **通知声音缺失**：在 `Notification.swift` 中将 `content.sound` 默认调度为系统标准提示音 `UNNotificationSound.default`；同时在前端 `reminderEngine.js` 中新增纯 Web Audio 原生合成的清脆双音提示铃声 `playNotificationChime()` (E5 -> A5)，无论前台系统通知均有清脆声响。
-   - **通知权限状态丢失**：在 `App.jsx` 挂载及窗口 `focus` 事件中接入 `isPermissionGranted()` 与 `onAction` 监听，修复每次进 App 权限重置为“未开启”的缺陷。
+1. **多币种结算体系与汇率折算**：
+   - 在新增续费表单中加入了货币选择功能（支持 CNY, USD, EUR, JPY, GBP, HKD, KRW）。
+   - 并在仪表盘的“预估月均开销”以及各列表页自动进行汇率折算预估（按基准静态汇率转为 CNY），同时统一展示当前所选货币的专属符号（如 `$`, `¥`, `€`, `£`）。
+2. **临近到期提醒判定阈值放宽**：
+   - 将首页的“近期紧急事项”与指示灯判定规则（`getUrgentSummary`）由原本的 `<=` 3 天，大幅放宽至 `<=` 7 天，确保提前更多时间警示用户。
+3. **日程票据流与日历防崩溃白屏修复**：
+   - 彻底修复用户反馈的“点击日历上的某一天直接白屏死机”问题。通过优化对 `lunar-javascript` 中部分非常规日期的安全降级及对 `selectedAlmanac.yi/.ji` 的可选链 `?.` 访问防御，消除前端 React 渲染的致命异常。
+4. **强校验补全与首页导航动向纠正**：
+   - 当新建记录选择“订阅续费”类型时，系统现会强制要求填入“费用”、“到期日”与“周期（不可为不设置）”，避免填漏导致自动化推算失效。
+   - 首页的“待提醒日程项”指示卡点击后不再跳入大日历全景，而是直接更务实地跳转到“待办列表（`pending`）”页的详细清单，一目了然。
+5. **通知铃音系统再优化与适配**：
+   - 对于 macOS 和 iOS 对自带声音 `sound` 参数的区别要求（iOS 需要传 `default`，而 macOS 需要传具体内置声效如 `Ping`）做了动态系统环境判定区分，确保多平台通知响铃行为如期生效。
+6. **移动端底栏空间再次紧凑化**：
+   - 彻底移除了 `.mobile-bottom-nav` 的强制固定高度 `height: calc(...)`，改为由 padding 自动撑开，确保各机型无论是否有 Home 触控条均能自适应压紧，解决“菜单栏太靠上来”的问题。
 
 ## 3. 核心交付物文件
-- **macOS 安装包**：`deliverables/小黄提醒管家-0.6.1-macOS-AppleSilicon.dmg` (5.0MB, 包含通知声音/权限状态修复)
-- **iPhone 安装包**：`deliverables/小黄提醒管家-0.6.1-iPhone-Unsigned.ipa` (4.0MB, 包含点击通知防闪退/系统提示音修复)
+- **macOS 安装包**：`deliverables/小黄提醒管家-0.6.3-macOS-AppleSilicon.dmg` (包含稳定性与多币种功能更新)
+- **iPhone 安装包**：`deliverables/小黄提醒管家-0.6.3-iPhone-Unsigned.ipa` (包含稳定性与多币种功能更新)
 
 ## 4. 自动化验证结果
-- `npm run test:calendar`：4/4 全部通过。
-- `npm run test:security`：4/4 全部通过。
-- `npm run test:sites`：4/4 全部通过。
-- `npm run build`：生产构建通过。
-- 双端本地打包：macOS DMG (5.0MB) 与 iPhone IPA (4.0MB) 重新编译生成完成。
+- 全量自动化测试回归：日历推期、安全机制全部通过。
+- 双端本地打包：macOS DMG 与 iPhone IPA 重新编译生成完成（已绕过沙盒签名）。
 
 ## 5. 远端代码与公开版本发布状态
-- 修复代码已提交并推送至私有仓库 (`origin: https://github.com/olikahn11/xiaohuang-reminder-private.git`) 与开源仓库 (`oss: https://github.com/olikahn11/xiaohuang-reminder-oss.git`) 的 `main` 分支。
-- GitHub Release `v0.6.2` 附件已使用 `--clobber` 覆写更新为最新的修复版 DMG 与 IPA 安装包，并补充了通知系统三项缺陷修复说明。
-
-
-
+- 修复代码已提交并推送至私有仓库 (`origin: https://github.com/olikahn11/xiaohuang-reminder-private.git`) 与开源仓库 (`oss: https://github.com/olikahn11/xiaohuang-reminder-oss.git`)。
+- GitHub Release `v0.6.3` 附件生成并发布。

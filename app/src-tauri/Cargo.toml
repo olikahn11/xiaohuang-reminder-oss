@@ -1,6 +1,6 @@
 [package]
 name = "xuji"
-version = "0.6.1"
+version = "0.6.3"
 description = "小黄提醒管家本地提醒与资料管理应用"
 authors = ["小黄系列"]
 license = "Apache-2.0"

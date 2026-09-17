@@ -147,7 +147,7 @@ export async function syncSystemReminders(records) {
             id: notifId,
             title: alertTitle,
             body: alertBody,
-            sound: "default",
+            sound: (typeof navigator !== "undefined" && /iPhone|iPad|iPod/.test(navigator.userAgent)) ? "default" : "Ping",
             schedule: Schedule.at(remindDate),
           });
         } catch (err) {
@@ -192,7 +192,7 @@ export function getUrgentSummary(records) {
       overdue.push({ ...record, daysLeft: days });
     } else if (days === 0) {
       today.push({ ...record, daysLeft: 0 });
-    } else if (days <= 3) {
+    } else if (days <= 7) {
       upcoming.push({ ...record, daysLeft: days });
     }
   }
@@ -255,7 +255,8 @@ export async function triggerImmediateNotification(title, body) {
   playNotificationChime();
   if (isTauri()) {
     try {
-      await sendNotification({ title, body, sound: "default" });
+      const isIOS = typeof navigator !== "undefined" && /iPhone|iPad|iPod/.test(navigator.userAgent);
+      await sendNotification({ title, body, sound: isIOS ? "default" : "Ping" });
       return true;
     } catch {
       // fallback

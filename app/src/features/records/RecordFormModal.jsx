@@ -23,6 +23,16 @@ const KINDS = [
   { key: "custom", label: "自定义" },
 ];
 
+export const CURRENCY_RATES = {
+  CNY: { symbol: "¥", rate: 1, label: "人民币 (CNY)" },
+  USD: { symbol: "$", rate: 7.24, label: "美元 (USD)" },
+  EUR: { symbol: "€", rate: 7.82, label: "欧元 (EUR)" },
+  JPY: { symbol: "¥", rate: 0.048, label: "日元 (JPY)" },
+  GBP: { symbol: "£", rate: 9.15, label: "英镑 (GBP)" },
+  HKD: { symbol: "HK$", rate: 0.93, label: "港币 (HKD)" },
+  KRW: { symbol: "₩", rate: 0.0053, label: "韩元 (KRW)" },
+};
+
 export function RecordFormModal({
   initialRecord = null,
   defaultKind = "renewal",
@@ -44,6 +54,7 @@ export function RecordFormModal({
     dueDate: initialRecord?.dueDate || defaultDate || todayStr,
     dueTime: initialRecord?.dueTime || "09:00",
     cycle: initialRecord?.cycle || (defaultKind === "renewal" ? "每月" : ""),
+    currency: initialRecord?.currency || "CNY",
     amount: initialRecord?.amount || "",
     payment: initialRecord?.payment || "",
     account: initialRecord?.account || "",
@@ -78,6 +89,20 @@ export function RecordFormModal({
     if (!form.title.trim()) {
       alert("请输入名称 / 事项标题");
       return;
+    }
+    if (form.kind === "renewal") {
+      if (!form.cycle || form.cycle === "不设置") {
+        alert("续费项目必须设置一个周期（例如：每月、每年或一次性）");
+        return;
+      }
+      if (!form.dueDate) {
+        alert("续费项目必须填写到期日 / 下次扣费日");
+        return;
+      }
+      if (!form.amount) {
+        alert("续费项目必须填写费用金额");
+        return;
+      }
     }
     onSave({
       ...form,
@@ -188,15 +213,35 @@ export function RecordFormModal({
             </div>
 
             <div className="form-group">
-              <label className="form-label">费用金额（元）</label>
-              <input
-                type="number"
-                step="any"
-                className="form-input"
-                placeholder="例如：128"
-                value={form.amount}
-                onChange={(e) => handleFieldChange("amount", e.target.value)}
-              />
+              <label className="form-label">币种及费用金额</label>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <select
+                  className="form-input"
+                  style={{ width: "120px" }}
+                  value={form.currency || "CNY"}
+                  onChange={(e) => handleFieldChange("currency", e.target.value)}
+                >
+                  {Object.keys(CURRENCY_RATES).map((code) => (
+                    <option key={code} value={code}>
+                      {code}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="number"
+                  step="any"
+                  className="form-input"
+                  style={{ flex: 1 }}
+                  placeholder="例如：128"
+                  value={form.amount}
+                  onChange={(e) => handleFieldChange("amount", e.target.value)}
+                />
+              </div>
+              {form.currency && form.currency !== "CNY" && form.amount && (
+                <small style={{ display: "block", marginTop: "4px", color: "var(--text-secondary)" }}>
+                  参考折合：¥ {(parseFloat(form.amount) * CURRENCY_RATES[form.currency].rate).toFixed(2)} CNY
+                </small>
+              )}
             </div>
           </div>
 

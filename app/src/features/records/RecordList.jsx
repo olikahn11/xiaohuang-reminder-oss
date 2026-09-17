@@ -21,6 +21,7 @@ import {
   WarningCircle,
 } from "@phosphor-icons/react";
 import { getRemainingDays } from "../../utils/cycleUtils.js";
+import { getCurrencySymbol } from "../../utils/currencyUtils.js";
 
 const ASSET_KINDS = [
   { key: "all", label: "全部资产", icon: FolderSimple },
@@ -331,7 +332,7 @@ export function RecordList({
                   <div className="bento-footer-left">
                     {record.amount ? (
                       <div className="bento-amount-box">
-                        <span className="bento-amount-currency">¥</span>
+                        <span className="bento-amount-currency">{getCurrencySymbol(record.currency)}</span>
                         <strong className="bento-amount-num">{record.amount}</strong>
                         {record.cycle && <small>/{record.cycle}</small>}
                       </div>
@@ -451,7 +452,7 @@ export function RecordList({
 
                   <div className="col-amount">
                     {record.amount ? (
-                      <span className="amount-text">¥{record.amount}</span>
+                      <span className="amount-text">{getCurrencySymbol(record.currency)}{record.amount}</span>
                     ) : (
                       <span className="text-muted">-</span>
                     )}

@@ -13,6 +13,7 @@ import {
 } from "@phosphor-icons/react";
 import { UrgentBanner } from "../../components/UrgentBanner.jsx";
 import { getRemainingDays } from "../../utils/cycleUtils.js";
+import { calculateCNYEquivalent, getCurrencySymbol } from "../../utils/currencyUtils.js";
 
 function CountdownRing({ days }) {
   const isOverdue = days < 0;
@@ -78,11 +79,16 @@ export function DashboardView({
   // 统计概览
   const renewals = activeRecords.filter((r) => r.kind === "renewal" || r.cycle);
   const totalMonthlyExpense = renewals.reduce((sum, r) => {
-    const amt = parseFloat(r.amount);
+    let amt = parseFloat(r.amount);
     if (isNaN(amt)) return sum;
+    amt = calculateCNYEquivalent(amt, r.currency);
+    
     if (r.cycle === "每月") return sum + amt;
     if (r.cycle === "每季度") return sum + amt / 3;
+    if (r.cycle === "每半年") return sum + amt / 6;
     if (r.cycle === "每年") return sum + amt / 12;
+    if (r.cycle === "每两个月") return sum + amt / 2;
+    if (r.cycle === "每周") return sum + (amt * 52) / 12;
     return sum;
   }, 0);
 
@@ -122,7 +128,7 @@ export function DashboardView({
                   {heroRecord.amount && (
                     <span className="meta-pill">
                       <CreditCard size={16} />
-                      ¥{heroRecord.amount} {heroRecord.cycle ? `/${heroRecord.cycle}` : ""}
+                      {getCurrencySymbol(heroRecord.currency)}{heroRecord.amount} {heroRecord.cycle ? `/${heroRecord.cycle}` : ""}
                     </span>
                   )}
                   <span className="meta-pill">
@@ -193,7 +199,7 @@ export function DashboardView({
 
           <div
             className="stat-card content-surface stat-card--clickable"
-            onClick={() => onNavigate("calendar")}
+            onClick={() => onNavigate("pending")}
           >
             <div className="stat-card__icon bg-violet">
               <CalendarBlank size={22} weight="duotone" />
@@ -201,7 +207,7 @@ export function DashboardView({
             <div className="stat-card__content">
               <span className="stat-label">待提醒日程项</span>
               <strong className="stat-value">{datedRecords.length} 项</strong>
-              <small>时间轨道已规划</small>
+              <small>点击查看具体清单</small>
             </div>
             <CaretRight size={18} className="stat-card__arrow" />
           </div>
@@ -257,7 +263,7 @@ export function DashboardView({
                   <strong>{record.title}</strong>
                   <span>
                     {record.cycle ? `周期：${record.cycle}` : record.subtitle || "日程提醒"}
-                    {record.amount ? ` · ¥${record.amount}` : ""}
+                    {record.amount ? ` · ${getCurrencySymbol(record.currency)}${record.amount}` : ""}
                   </span>
                 </div>
 

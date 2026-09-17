@@ -15,6 +15,7 @@ import {
   lunarPreviewForDate,
   lunarSummaryForDate,
 } from "../../lunarCalendar.js";
+import { getCurrencySymbol } from "../../utils/currencyUtils.js";
 
 export function CinematicCalendar({
   records,
@@ -251,13 +252,13 @@ export function CinematicCalendar({
               <div className="yiji-line">
                 <span className="tag-yi">宜</span>
                 <span className="yiji-text">
-                  {selectedAlmanac.yi.slice(0, 4).join("、") || "诸事皆宜"}
+                  {selectedAlmanac?.yi?.slice(0, 4).join("、") || "诸事皆宜"}
                 </span>
               </div>
               <div className="yiji-line">
                 <span className="tag-ji">忌</span>
                 <span className="yiji-text">
-                  {selectedAlmanac.ji.slice(0, 4).join("、") || "诸事不忌"}
+                  {selectedAlmanac?.ji?.slice(0, 4).join("、") || "诸事不忌"}
                 </span>
               </div>
             </div>
@@ -293,7 +294,7 @@ export function CinematicCalendar({
 
                 <div className="agenda-item-card__meta">
                   <span className="agenda-meta-cycle">🔄 {item.cycleText}</span>
-                  {item.record.amount && <span className="agenda-meta-amount">¥{item.record.amount}</span>}
+                  {item.record.amount && <span className="agenda-meta-amount">{getCurrencySymbol(item.record.currency)}{item.record.amount}</span>}
                   <span className="agenda-meta-time">⏰ {item.record.dueTime || "全天"}</span>
                 </div>
 
